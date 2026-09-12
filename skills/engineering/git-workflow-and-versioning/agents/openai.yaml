@@ -1,0 +1,3 @@
+interface:
+  display_name: "Git Workflow"
+  short_description: "Structures git workflow, atomic commits, and PR discipline"

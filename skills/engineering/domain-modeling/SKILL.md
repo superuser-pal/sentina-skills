@@ -1,74 +1,54 @@
 ---
 name: domain-modeling
-description: Build and sharpen a project's domain model. Use when discussing codebase terminology, writing or editing a CONTEXT.md, or recording or editing an ADR.
+description: Construye y afila el modelo de dominio y glosario del repositorio. Se usa al discutir terminología, editar contexto/glosario.md o registrar decisiones bi-temporales en contexto/decisiones/.
 ---
 
-# Domain Modeling
+# Domain Modeling (Modelado de Dominio)
 
-Actively build and sharpen the project's domain model as you design. This is the *active* discipline: challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise. (Merely *reading* `CONTEXT.md` for vocabulary is not this skill: that's a one-line habit any skill can do. This skill is for when you're changing the model, not just consuming it.)
+Construye y afila activamente el modelo de dominio y la terminología del proyecto mientras diseñas. Desafía términos ambiguos, propone nombres canónicos y actualiza el glosario y las decisiones del Vault en el momento en que se cristalizan.
 
-## File structure
+---
 
-Most repos have a single context:
+## Estructura en Repositorios Sentina
 
-```
-/
-├── CONTEXT.md
-├── docs/
-│   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
-└── src/
-```
-
-If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The map points to where each one lives:
+En el ecosistema Sentina, el dominio y las decisiones se modelan dentro del grafo de conocimiento:
 
 ```
 /
-├── CONTEXT-MAP.md
-├── docs/
-│   └── adr/                          ← system-wide decisions
-├── src/
-│   ├── ordering/
-│   │   ├── CONTEXT.md
-│   │   └── docs/adr/                 ← context-specific decisions
-│   └── billing/
-│       ├── CONTEXT.md
-│       └── docs/adr/
+├── contexto/
+│   ├── glosario.md                   ← Vocabulario controlado (id: glosario:*)
+│   ├── arquitectura.md               ← Arquitectura y sistemas (id: arq:*)
+│   ├── alcance.md                    ← Alcance del producto o sistema
+│   └── decisiones/                   ← Decisiones arquitectónicas bi-temporales
+│       ├── dec-001-modelo-eventos.md ← id: dec:001-modelo-eventos
+│       └── dec-002-migrar-ghl.md
 ```
 
-Create files lazily: only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
+- Cada término del glosario o decisión es un nodo del grafo con identificador estable (`id: glosario:<slug>`, `id: dec:<slug>`).
+- En carpetas de decisiones, se sigue la regla bi-temporal: una decisión superada no se sobreescribe; se archiva (`lifecycle: archived`, `valid_until`) y se enlaza mediante `replaces` / `superseded_by`.
 
-## During the session
+---
 
-### Challenge against the glossary
+## Durante la Sesión
 
-When the user uses a term that conflicts with the existing language in `CONTEXT.md`, call it out immediately. "Your glossary defines 'cancellation' as X, but you seem to mean Y. Which is it?"
+### 1. Desafiar contra el glosario
+Cuando el usuario o el agente use un término que entre en conflicto con el glosario en `contexto/glosario.md`, señálalo de inmediato: *"El glosario define 'contacto' como X, pero aquí parece utilizarse como 'lead cualificado'. ¿Cuál es la distinción precisa?"*
 
-### Sharpen fuzzy language
+### 2. Afilar lenguaje ambiguo
+Cuando se usen términos sobrecargados, propón un término canónico exacto. Evita sinónimos o polisemia en conceptos nucleares del negocio.
 
-When the user uses vague or overloaded terms, propose a precise canonical term. "You're saying 'account': do you mean the Customer or the User? Those are different things."
+### 3. Discutir escenarios concretos
+Prueba los límites de los conceptos con escenarios reales y casos extremos. No aceptes abstracciones vagas sin validar cómo interactúan con las bases de datos y flujos de automatización.
 
-### Discuss concrete scenarios
+### 4. Contrastar con el código y esquemas
+Verifica si el código real o los esquemas (`bases/`, `esquema/etiquetas.md`, `webhooks/`) concuerdan con la terminología descrita. Si hay discrepancia, resuélvela antes de avanzar.
 
-When domain relationships are being discussed, stress-test them with specific scenarios. Invent scenarios that probe edge cases and force the user to be precise about the boundaries between concepts.
+### 5. Actualizar el glosario inline
+Cuando se acuerde un término nuevo o se clarifique uno existente, actualiza `contexto/glosario.md` inmediatamente. Mantén el glosario libre de detalles efímeros de implementación; es un vocabulario semántico del dominio.
 
-### Cross-reference with code
-
-When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code cancels entire Orders, but you just said partial cancellation is possible. Which is right?"
-
-### Update CONTEXT.md inline
-
-When a term is resolved, update `CONTEXT.md` right there. Don't batch these up: capture them as they happen. Use the format in [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
-
-`CONTEXT.md` should be totally devoid of implementation details. Do not treat `CONTEXT.md` as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
-
-### Offer ADRs sparingly
-
-Only offer to create an ADR when all three are true:
-
-1. **Hard to reverse**: the cost of changing your mind later is meaningful
-2. **Surprising without context**: a future reader will wonder "why did they do it this way?"
-3. **The result of a real trade-off**: there were genuine alternatives and you picked one for specific reasons
-
-If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
+### 6. Registrar Decisiones Arquitectónicas (Decisiones en `contexto/decisiones/`)
+Crea un nuevo nodo de decisión en `contexto/decisiones/dec-<slug>.md` únicamente cuando la decisión cumpla:
+1. **Difícil de revertir:** el costo de cambiar de opinión más adelante es significativo.
+2. **Impacto estructural:** altera cómo se estructuran bases, flujos, contratos o responsabilidades.
+3. **No obvia:** existían alternativas reales y hubo que sopesar compensaciones (trade-offs).
+Incluye siempre su frontmatter con `id: dec:<slug>`, `valid_from`, y las aristas `relationships` correspondientes.

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Constraint-Driven Dev"
+  short_description: "Enforces written quality bars and stops agents lowering standards"

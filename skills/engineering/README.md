@@ -1,32 +1,37 @@
 # Engineering
 
-Skills I use daily for code work.
+Skills for daily engineering work in Sentina repositories.
 
 ## User-invoked
 
-Reachable only when you type them (Claude Code: `disable-model-invocation: true`; Codex: `policy.allow_implicit_invocation: false` in `agents/openai.yaml`).
+Reachable only when explicitly invoked by the developer (`disable-model-invocation: true`).
 
-- **[ask-matt](./ask-matt/SKILL.md)**: Ask which skill or flow fits your situation. A router over the user-invoked skills in this repo.
-- **[grill-with-docs](./grill-with-docs/SKILL.md)**: Grilling session that also builds your project's domain model, sharpening terminology and updating `CONTEXT.md` and ADRs inline.
-- **[triage](./triage/SKILL.md)**: Move issues through a state machine of triage roles.
-- **[improve-codebase-architecture](./improve-codebase-architecture/SKILL.md)**: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
-- **[setup-matt-pocock-skills](./setup-matt-pocock-skills/SKILL.md)**: Configure this repo for the engineering skills (issue tracker, triage labels, domain doc layout). Run once per repo.
-- **[to-spec](./to-spec/SKILL.md)**: Turn the current conversation into a spec and publish it to the issue tracker.
-- **[to-tickets](./to-tickets/SKILL.md)**: Break any plan, spec, or conversation into a set of tracer-bullet tickets, each declaring its blocking edges, whether as text in a local file or as native blocking links on a real tracker.
-- **[implement](./implement/SKILL.md)**: Build the work described by a spec or set of tickets, driving `/tdd` at pre-agreed seams and closing out with `/code-review` before committing.
-- **[wayfinder](./wayfinder/SKILL.md)**: Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on the issue tracker, resolved one at a time until the way to the destination is clear.
+- **[ask-sentina](./ask-sentina/SKILL.md)**: Router for the Sentina development workflow: guides which skill to use from Notion task to PR with evidence.
+- **[to-spec](./to-spec/SKILL.md)**: Turn a Notion AI minute, conversation, or task into an atomic, formal technical specification with graph IDs and anti-rationalization validation.
+- **[implement](./implement/SKILL.md)**: Disciplined execution on branch `feat/tarea-*` following a spec, with local validation, required evidence in `evidencia/<id>/meta.yaml`, and strict anti-rationalization tables.
+- **[to-tickets](./to-tickets/SKILL.md)**: Break a plan or spec into tracer-bullet slices, each declaring its blocking edges.
+- **[grill-with-docs](./grill-with-docs/SKILL.md)**: Grilling session that builds the project's domain model, sharpening terminology and updating documentation.
+- **[triage](./triage/SKILL.md)**: Move incoming issues through a state machine of triage roles.
+- **[improve-codebase-architecture](./improve-codebase-architecture/SKILL.md)**: Scan a codebase for deepening opportunities and present them as a visual report.
+- **[wayfinder](./wayfinder/SKILL.md)**: Chart a shared map of decisions for large or foggy efforts, resolved one at a time.
 
 ## Model-invoked
 
-Model- or user-reachable (rich trigger phrasing so the model can reach for them).
+Model- or user-reachable skills that trigger automatically or on request.
 
-- **[prototype](./prototype/SKILL.md)**: Build a throwaway prototype to answer a design question: a single shareable HTML file for state/logic, or several toggleable UI variations.
-
-- **[diagnosing-bugs](./diagnosing-bugs/SKILL.md)**: Disciplined diagnosis loop for hard bugs and performance regressions: build a feedback loop that goes red on this bug → minimise → hypothesise → instrument → fix → regression-test.
-- **[research](./research/SKILL.md)**: Investigate a question against high-trust primary sources and capture the findings as a cited Markdown file in the repo, run as a background agent.
-- **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop. Builds features or fixes bugs one vertical slice at a time.
-- **[domain-modeling](./domain-modeling/SKILL.md)**: Actively build and sharpen a project's domain model by challenging terms, stress-testing with scenarios, and updating `CONTEXT.md` and ADRs inline.
-- **[codebase-design](./codebase-design/SKILL.md)**: Shared discipline and vocabulary for designing deep modules: small interfaces, clean seams, testable through the interface.
-- **[code-review](./code-review/SKILL.md)**: Two-axis review of the diff since a fixed point: **Standards** (does it follow the repo's coding standards, plus a Fowler smell baseline?) and **Spec** (does it faithfully implement the originating issue/spec?), run as parallel sub-agents.
-- **[resolving-merge-conflicts](./resolving-merge-conflicts/SKILL.md)**: Work through an in-progress git merge or rebase conflict hunk by hunk, resolving by intent traced to each side's primary source, then finish the operation, never `--abort`.
-- **[wizard](./wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform: provisioning infrastructure, setting up credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover.
+- **[security-and-hardening](./security-and-hardening/SKILL.md)**: Threat-first hardening, input validation, secrets protection, and zero customer PII in Git repositories.
+- **[code-simplification](./code-simplification/SKILL.md)**: Clarity over cleverness: simplify code, eliminate cognitive debt, and maintain green tests.
+- **[deprecation-and-migration](./deprecation-and-migration/SKILL.md)**: Safe deprecations and expand-contract migrations for schemas, APIs, and legacy contracts.
+- **[constraint-driven-development](./constraint-driven-development/SKILL.md)**: Establish written quality bars and stop agents from silently lowering standards or removing checks.
+- **[api-and-interface-design](./api-and-interface-design/SKILL.md)**: Design clean REST endpoints, webhooks, module boundaries, and type contracts.
+- **[doubt-driven-development](./doubt-driven-development/SKILL.md)**: Fresh-context adversarial review for high-stakes decisions and security-sensitive logic.
+- **[git-workflow-and-versioning](./git-workflow-and-versioning/SKILL.md)**: Atomic commits, short-lived `feat/tarea-*` branches, evidence commits, and PR discipline.
+- **[prototype](./prototype/SKILL.md)**: Build a throwaway prototype on a `prototype/<name>` branch to answer design questions.
+- **[diagnosing-bugs](./diagnosing-bugs/SKILL.md)**: Disciplined diagnosis loop for hard bugs: tight feedback loop, hypothesize, instrument, and regression-test.
+- **[research](./research/SKILL.md)**: Investigate questions against primary sources and capture cited findings as Markdown.
+- **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
+- **[domain-modeling](./domain-modeling/SKILL.md)**: Build and sharpen the domain model, updating `contexto/glosario.md` and bi-temporal decisions in `contexto/decisiones/`.
+- **[codebase-design](./codebase-design/SKILL.md)**: Shared discipline for deep modules: small interfaces, clean seams, and high leverage.
+- **[code-review](./code-review/SKILL.md)**: Multi-axis review of diffs against project standards, Sentina invariants, and specs.
+- **[resolving-merge-conflicts](./resolving-merge-conflicts/SKILL.md)**: Resolve git merge/rebase conflicts hunk by hunk by tracing original intent.
+- **[wizard](./wizard/SKILL.md)**: Interactive bash scripts for human-in-the-loop tasks (credentials, secrets, infrastructure).

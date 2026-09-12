@@ -1,30 +1,19 @@
-# Matt Pocock Skills
+# Sentina Skills
 
-A collection of agent skills (slash commands and behaviors) loaded by Claude Code. Skills are organized into buckets and consumed by per-repo configuration emitted by `/setup-matt-pocock-skills`.
+Colección de habilidades de desarrollo y productividad de agentes para el ecosistema Sentina, combinando la ergonomía y foco en flujos de Matt Pocock con las tablas anti-racionalización y disciplina de Addy Osmani (Manifiesto Sentina v2.3 §14).
 
-## Language
+## Conceptos Nucleares
 
-**Issue tracker**:
-The tool that hosts a repo's issues: GitHub Issues, Linear, a local `.scratch/` markdown convention, or similar. Skills like `to-tickets`, `to-spec`, and `triage` read from and write to it.
-_Avoid_: backlog manager, backlog backend, issue host
+**Vault / Grafo de Conocimiento:**
+La raíz del repositorio Sentina funciona como Vault de Obsidian. Las categorías puras (`contexto`, `bases`, `flujos`, `agentes`, `producto`, `esquema`, `webhooks`) contienen exclusivamente nodos Markdown con frontmatter estandarizado (`id: tipo:slug`, `valid_from`, `relationships`).
 
-**Issue**:
-A single tracked unit of work inside an **Issue tracker**: a bug, task, spec, or slice produced by `to-tickets`.
-_Avoid_: ticket (use only when quoting external systems that call them tickets, or for a **Decision ticket**, see below)
+**Flujo Inbound / Outbound:**
+- **Inbound:** El trabajo proviene de Notion (tareas, minutas procesadas con Notion AI) y se desarrolla en ramas aisladas `feat/tarea-*` o `fix/tarea-*`.
+- **Outbound:** El desarrollo produce especificaciones atómicas, pruebas, validación local (`guardian.py`) y evidencia obligatoria (`evidencia/<id>/meta.yaml`). Al fusionar en `main`, GitHub Actions sincroniza el estado con Notion.
 
-**Decision ticket**:
-A `wayfinder` unit: a child **Issue** of a `wayfinder:map` holding a *question* whose resolution is a decision, not a slice of a build to execute. The **decision** qualifier is what keeps it distinct from an implementation ticket; `wayfinder` introduces the term, then uses "ticket".
-
-**Triage role**:
-A canonical state-machine label applied to an **Issue** during triage (e.g. `needs-triage`, `ready-for-afk`). Each role maps to a real label string in the **Issue tracker** via `docs/agents/triage-labels.md`.
-
-## Relationships
-
-- An **Issue tracker** holds many **Issues**
-- An **Issue** carries one **Triage role** at a time
-- A **Decision ticket** is an **Issue** (a child of a `wayfinder:map`)
-
-## Flagged ambiguities
-
-- "backlog" was previously used to mean both the *tool* hosting issues and the *body of work* inside it. Resolved: the tool is the **Issue tracker**; "backlog" is no longer used as a domain term.
-- "backlog backend" / "backlog manager". Resolved: collapsed into **Issue tracker**.
+**Tablas Anti-Racionalización (§14.2):**
+Inyecciones normativas inflexibles que bloquean atajos cognitivos del modelo de IA:
+1. *Protección del Grafo:* todo cambio de comportamiento exige nodo en `contexto/decisiones/` con bi-temporalidad (`valid_from`, `replaces`, `superseded_by`).
+2. *Prevención de Bucles (GHL):* prohibido generar código o YAML sin las 5 columnas en `esquema/etiquetas.md` y 'Quién la quita'.
+3. *Seguridad y Privacidad:* cero PII en repositorios; nunca URLs reales de webhooks en configs o JSONs.
+4. *Regla de Evidencia Obligatoria:* todo PR con integraciones o contratos requiere evidencia reproducible commiteada en la rama.

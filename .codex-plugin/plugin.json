@@ -1,0 +1,29 @@
+{
+  "name": "sentina-skills",
+  "version": "2.0.0",
+  "description": "Sentina engineering & productivity skills: hybrid Pocock ergonomics + Addy Osmani anti-rationalization tables.",
+  "author": {
+    "name": "Sentina",
+    "url": "https://sentina.ai"
+  },
+  "homepage": "https://github.com/superuser-pal/sentina-skills",
+  "repository": "https://github.com/superuser-pal/sentina-skills",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Sentina Skills",
+    "shortDescription": "Disciplined engineering skills for AI coding agents: spec, build, test, review, and anti-rationalization.",
+    "longDescription": "Sentina Skills bundles production engineering workflows combining Matt Pocock workflow ergonomics with Addy Osmani anti-rationalization tables for the Sentina ecosystem.",
+    "developerName": "Sentina",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Help me choose the right Sentina workflow for this task",
+      "Follow the Sentina development workflow: /grill-me, /to-spec, /implement with evidence"
+    ]
+  }
+}

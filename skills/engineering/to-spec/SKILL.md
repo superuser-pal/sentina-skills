@@ -1,75 +1,75 @@
 ---
 name: to-spec
-description: "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed."
+description: Transforma una minuta de Notion AI, conversación o requerimiento en una especificación técnica formal atómica para repositorios Sentina.
 disable-model-invocation: true
 ---
 
-This skill takes the current conversation context and codebase understanding and produces a spec. Do NOT interview the user; just synthesize what you already know.
+# To Spec (De Minuta a Especificación Atómica)
 
-The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
+Transforma las minutas de Notion AI, requerimientos acordados en `/grill-me` o solicitudes del usuario en una especificación técnica formal y atómica.
 
-## Process
+No vuelvas a entrevistar al usuario; sintetiza con rigor técnico lo acordado y validado contra el contexto del repositorio.
 
-1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's domain glossary vocabulary throughout the spec, and respect any ADRs in the area you're touching.
+---
 
-2. Sketch out the seams at which you're going to test the feature. Existing seams should be preferred to new ones. Use the highest seam possible. If new seams are needed, propose them at the highest point you can. The fewer seams across the codebase, the better - the ideal number is one.
+## Proceso
 
-Check with the user that these seams match their expectations.
+1. **Lectura y fundamentación en el contexto local:**
+   - Lee `.sentina/manifiesto.yaml` (tipo de perfil, categorías y tipos permitidos).
+   - Consulta los nodos canónicos en `contexto/` (`arquitectura.md`, `decisiones/`, `alcance.md`, `glosario.md`).
+   - Usa exclusivamente la terminología del glosario y respeta los contratos y decisiones vigentes.
 
-3. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+2. **Definición de costuras (seams) y estrategia de prueba:**
+   - Define las costuras en las que se probará la funcionalidad. Prioriza costuras existentes de alto nivel (comportamiento observable, contratos de endpoints, esquemas) en lugar de crear mocks o costuras frágiles internas.
 
-<spec-template>
+3. **Verificación preventiva de las Tablas Anti-Racionalización (§14.2):**
+   - Antes de cerrar el spec, valida que cumpla estrictamente con:
+     - **Grafo:** ¿Se crean o superan nodos con sus IDs estables (`id: tipo:slug`), `valid_from` y aristas `relationships`?
+     - **GHL:** Si toca CRM, ¿se definieron las 5 columnas de toda etiqueta en `esquema/etiquetas.md`, incluyendo "Quién la quita"?
+     - **Seguridad:** ¿Se usan variables de entorno en vez de URLs reales de webhooks? ¿Se garantizó cero PII de clientes?
+     - **Evidencia:** ¿El spec define qué evidencia se generará en `evidencia/<id>/meta.yaml` y su artefacto/log?
 
-## Problem Statement
+4. **Redacción del spec usando la plantilla Sentina:**
+   Escribe la especificación usando la siguiente estructura formal:
 
-The problem that the user is facing, from the user's perspective.
+---
 
-## Solution
+## Plantilla de Especificación Sentina
 
-The solution to the problem, from the user's perspective.
+```markdown
+# [ID o Nombre de la Tarea] - Especificación Técnica
 
-## User Stories
+## 1. Problema y Objetivo
+- **Contexto:** Qué situación o necesidad origina este cambio.
+- **Objetivo técnico:** Qué estado final medible alcanzará el sistema.
 
-A LONG, numbered list of user stories. Each user story should be in the format of:
+## 2. Archivos a Tocar
+Lista exhaustiva de rutas relativas desde la raíz del repositorio:
+- `[NUEVO|MODIFICAR|SUPERAR]` `<ruta/al/archivo>`, Justificación breve del cambio.
 
-1. As an <actor>, I want a <feature>, so that <benefit>
+## 3. Impacto en el Grafo de Conocimiento
+Declaración explícita de nodos y aristas para `contexto/` o categorías puras:
+- **Nodos a crear:**
+  - `id: tipo:slug` (`valid_from: YYYY-MM-DD`, `category: ...`, `relationships: [...]`)
+- **Nodos a superar (bi-temporalidad):**
+  - Nodo previo: `valid_until: YYYY-MM-DD`, `lifecycle: archived`, `superseded_by: "[[nuevo-stem]]"`
+  - Nodo nuevo: `relationships: [{type: replaces, target: "[[viejo-stem]]"}]`
+- **Aristas dependientes:**
+  - `relationships: [{type: depende_de, target: "[[stem]]"}]`
 
-<user-story-example>
-1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
-</user-story-example>
+## 4. Decisiones de Implementación y Contratos
+- Módulos, interfaces o esquemas a crear o modificar.
+- Contratos de payload (webhooks, APIs, modelos).
+- Si toca GHL: detalle de etiquetas (Etiqueta, Propósito, Quién la pone, Quién la quita, Dependencias).
+- Variables de entorno requeridas (sin incluir secretos ni URLs reales).
 
-This list of user stories should be extremely extensive and cover all aspects of the feature.
+## 5. Casos de Prueba y Criterios de Aceptación
+- **Criterios de Aceptación:** Lista numerada con condiciones verificables (Gherkin o checklist booleano).
+- **Costuras de Prueba:** Qué pruebas automatizadas o de validación local se ejecutarán (e.g. `pytest`, `npm test`, guardian).
+- **Plan de Evidencia:** Identificador del hecho técnico y archivo esperado en `evidencia/<id>/meta.yaml` + log/artefacto reproducible.
 
-## Implementation Decisions
+## 6. Fuera de Alcance (Out of Scope)
+- Qué aspectos quedan expresamente excluidos de esta tarea.
+```
 
-A list of implementation decisions that were made. This can include:
-
-- The modules that will be built/modified
-- The interfaces of those modules that will be modified
-- Technical clarifications from the developer
-- Architectural decisions
-- Schema changes
-- API contracts
-- Specific interactions
-
-Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
-
-Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it within the relevant decision and note briefly that it came from a prototype. Trim to the decision-rich parts, not a working demo, just the important bits.
-
-## Testing Decisions
-
-A list of testing decisions that were made. Include:
-
-- A description of what makes a good test (only test external behavior, not implementation details)
-- Which modules will be tested
-- Prior art for the tests (i.e. similar types of tests in the codebase)
-
-## Out of Scope
-
-A description of the things that are out of scope for this spec.
-
-## Further Notes
-
-Any further notes about the feature.
-
-</spec-template>
+Una vez redactado el spec, preséntalo al usuario para su aprobación antes de proceder a **/implement**.
