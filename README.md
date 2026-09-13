@@ -23,7 +23,7 @@ Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de siete e
 ```
   NOTION          LOCK          GRILL          SPEC           BUILD          REVIEW          SYNC
  ┌──────┐      ┌────────┐    ┌────────┐     ┌────────┐     ┌─────────┐    ┌─────────┐     ┌────────┐
- │Task /│ ───▶ │Bloqueo │ ─▶ │/grill- │ ──▶ │/to-spec│ ──▶ │/implement│ ─▶ │ /code-  │ ──▶ │ PR +   │
+ │Task /│ ───▶ │Bloqueo │ ─▶ │$grill- │ ──▶ │$to-spec│ ──▶ │$implement│ ─▶ │ $code-  │ ──▶ │ PR +   │
  │Minuta│      │Notion  │    │   me   │     │ (Spec) │     │ (feat/*)│    │ review  │     │ Evid.  │
  └──────┘      └────────┘    └────────┘     └────────┘     └─────────┘    └─────────┘     └────────┘
 ```
@@ -40,27 +40,27 @@ Toda tarea técnica nace en Notion (la interfaz de gestión de negocio, §11.1).
 ### 2. Bloqueo de concurrencia en Notion (§11.1.4)
 Antes de escribir especificaciones o código, el agente actualiza el estado de la tarea en Notion a **"En curso"** y asigna el responsable directo. Este bloqueo previene colisiones con otras sesiones o agentes en paralelo.
 
-### 3. Auditoría con el Vault (`/grill-me`)
+### 3. Auditoría con el Vault (`$grill-me` en Codex)
 El agente inspecciona el contexto local (`contexto/`, `bases/`, `esquema/` y aristas `relationships` existentes) y abre una sesión de interrogatorio estructurado:
 - Desafía supuestos tácitos, dependencias ocultas y riesgos de arquitectura.
 - Aplica el patrón frontera: presenta opciones concretas con respuestas recomendadas (`➡️`).
 - Encuentra hechos en el repositorio de forma autónoma; nunca le pregunta al usuario lo que puede leer en el vault.
 
-### 4. De Minuta o Acuerdo a Especificación Atómica (`/to-spec`)
+### 4. De Minuta o Acuerdo a Especificación Atómica (`$to-spec` en Codex)
 Sintetiza la sesión de preguntas o la minuta de Notion AI en una especificación técnica formal:
 - Declara la lista exhaustiva de archivos a modificar o crear.
 - Define el impacto en el grafo de conocimiento: nodos a crear con frontmatter completo (§3.1), nodos a superar (`superseded_by`, `replaces`), aristas tipadas (`depende_de`) y stubs externos (`fuente_de_verdad: externo`).
 - Establece costuras de prueba, criterios de aceptación verificables y el plan de evidencia.
 - Valida preventivamente el cumplimiento de las 4 tablas anti-racionalización. El usuario debe aprobar la especificación antes de pasar a la implementación.
 
-### 5. Construcción Disciplinada (`/implement`)
+### 5. Construcción Disciplinada (`$implement` en Codex)
 El agente ejecuta el trabajo en la rama aislada siguiendo la especificación aprobada:
-- Conduce el desarrollo mediante pruebas ([`/tdd`](./skills/engineering/tdd/SKILL.md)).
+- Conduce el desarrollo mediante pruebas ([`tdd`](./skills/engineering/tdd/SKILL.md)).
 - Ejecuta las validaciones locales del proyecto y el guardián del repositorio (`python3 .github/scripts/guardian.py`).
 - Genera obligatoriamente el registro de evidencia en `evidencia/<id>/meta.yaml` acompañado de su log o artefacto técnico reproducible (§9).
 - Actualiza la contabilidad del vault (`index.md`, `log.md` y `hot.md`, §13.3) tras crear o superar nodos del grafo.
 
-### 6. Revisión Multi-Eje previa al Pull Request (`/code-review`)
+### 6. Revisión Multi-Eje previa al Pull Request (`$code-review` en Codex)
 Audita el diff completo contra la especificación técnica, los estándares de código, la ausencia total de datos personales de clientes (cero PII) y la ausencia de URLs reales de webhooks o secretos no obvios.
 
 ### 7. Pull Request y Sincronización Outbound hacia Notion
@@ -83,7 +83,7 @@ Inyectadas en las habilidades centrales para bloquear atajos cognitivos del mode
 | Pretexto habitual del agente | Invariante Sentina | Acción obligatoria |
 |---|---|---|
 | *"Solo necesitamos etiquetar el contacto al dispararse la automatización"* | Una etiqueta sin salida documentada genera un bucle permanente y retiene contactos de forma indefinida | Si el cambio toca `sentina-ghl`, está prohibido generar código, JSON o YAML sin haber documentado la columna 'Quién la quita' en `esquema/etiquetas.md`. |
-| *"Luego agregamos la condición de salida cuando probemos el flujo en vivo"* | La consistencia de esquemas precede a la ejecución | Exigir en `/to-spec` y validar en `/implement` que toda etiqueta referenciada cuente con sus cinco columnas completas (§6.1). |
+| *"Luego agregamos la condición de salida cuando probemos el flujo en vivo"* | La consistencia de esquemas precede a la ejecución | Exigir en `to-spec` y validar en `implement` que toda etiqueta referenciada cuente con sus cinco columnas completas (§6.1). |
 
 ### 3. Seguridad, Privacidad y Secretos
 | Pretexto habitual del agente | Invariante Sentina | Acción obligatoria |
@@ -103,7 +103,7 @@ Inyectadas en las habilidades centrales para bloquear atajos cognitivos del mode
 
 ### 1. Vinculación Local Automática (Recomendado)
 
-Para enlazar las habilidades en los directorios de agentes locales de tu máquina:
+Para enlazar las habilidades estables de `engineering/` y `productivity/` en los directorios de agentes locales de tu máquina:
 
 ```bash
 bash scripts/link-skills.sh
@@ -114,6 +114,14 @@ Este script genera enlaces simbólicos (*symlinks*) en:
 - `~/.agents/skills`: Para Codex y entornos compatibles con el estándar de Agent Skills.
 
 Al trabajar mediante enlaces simbólicos, basta con ejecutar `git pull` en este repositorio para que todas tus herramientas locales queden sincronizadas al instante.
+
+Las habilidades beta de `skills/in-progress/` son opcionales:
+
+```bash
+bash scripts/link-skills.sh --include-in-progress
+```
+
+Una ejecución posterior sin esa opción vuelve a la instalación estable y retira únicamente los enlaces beta creados desde este repositorio. Las habilidades en `misc/` y `deprecated/` nunca se instalan.
 
 ### 2. Soporte para Múltiples Entornos de Agente
 
@@ -128,7 +136,7 @@ El repositorio cuenta con compatibilidad dual nativa:
 
 Las habilidades se clasifican según su forma de ejecución:
 
-1. **User-invoked (Manuales con `/`):** Herramientas de proceso invocadas directamente por el usuario para guiar fases clave del ciclo de desarrollo (por ejemplo: `/ask-sentina`, `/grill-me`, `/to-spec`, `/implement`). Tienen la invocación autónoma del modelo desactivada para evitar ejecuciones accidentales.
+1. **User-invoked (Manuales):** Herramientas de proceso invocadas directamente por el usuario para guiar fases clave del ciclo de desarrollo. En Codex se mencionan con `$`, por ejemplo `$ask-sentina`, `$grill-me`, `$to-spec` y `$implement`. En Claude Code se invocan con `/`, por ejemplo `/ask-sentina`. Tienen la invocación autónoma del modelo desactivada para evitar ejecuciones accidentales.
 2. **Model-invoked (Reactivas / Autónomas):** Habilidades que el agente activa de forma autónoma según las necesidades técnicas de la tarea (por ejemplo: diseño de APIs, TDD, simplificación de código, análisis de seguridad, resolución de conflictos de git). También pueden ser invocadas explícitamente por el usuario si se desea forzar su uso.
 
 ---
@@ -137,7 +145,7 @@ Las habilidades se clasifican según su forma de ejecución:
 
 ### Enrutador Principal
 
-- **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: El mapa oficial del ciclo de desarrollo Sentina. Si tienes dudas sobre qué habilidad o paso sigue, ejecuta `/ask-sentina` para recibir la ruta exacta.
+- **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: El mapa oficial del ciclo de desarrollo Sentina. Si tienes dudas sobre qué habilidad o paso sigue, ejecuta `$ask-sentina` en Codex para recibir la ruta exacta.
 
 ---
 
@@ -213,22 +221,22 @@ Habilidades técnicas reactivas que el agente invoca de manera autónoma o que p
    git checkout -b feat/tarea-migracion-webhooks
    ```
 3. Ejecuta el enrutador o inicia la sesión de preguntas:
-   ```bash
-   /grill-me
+   ```text
+   $grill-me
    ```
 4. Responde las rondas de preguntas seleccionando las opciones propuestas o refinando los puntos abiertos.
 5. Genera la especificación técnica formal:
-   ```bash
-   /to-spec
+   ```text
+   $to-spec
    ```
 6. Revisa el documento generado en la terminal. Cuando estés conforme, autoriza el inicio de la construcción:
-   ```bash
-   /implement
+   ```text
+   $implement
    ```
 7. El agente desarrollará el código con pruebas, validará el guardián local y registrará la evidencia en `evidencia/<id>/meta.yaml`.
 8. Ejecuta la revisión de calidad antes de publicar tu rama:
-   ```bash
-   /code-review
+   ```text
+   $code-review
    ```
 9. Abre el Pull Request. Al fusionarse con `main`, la tarea se actualizará automáticamente en Notion.
 

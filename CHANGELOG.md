@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Document Codex skill invocation with `$skill-name` and `/skills`, while preserving `/skill-name` for Claude Code.
+- Promote `scripts/link-skills.sh` to a supported installer that refuses to replace user-owned files, directories, or links.
+- Install only promoted `engineering/` and `productivity/` skills by default. Add `--include-in-progress` for beta skills and remove repository-owned beta links when returning to the stable default.
+
 ## 2.1.0
 
 Closed gaps found by an architecture-vs-implementation audit against `sentina-repos-manifiesto-v2.md` (v2.3):

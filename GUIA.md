@@ -25,7 +25,7 @@ Todo ciclo de desarrollo en Sentina sigue un flujo disciplinado de 6 pasos:
 ```
   NOTION          GRILL          SPEC           BUILD          REVIEW          SYNC
  ┌──────┐      ┌────────┐     ┌────────┐     ┌─────────┐    ┌─────────┐     ┌────────┐
- │Task /│ ───▶ │/grill- │ ──▶ │/to-spec│ ──▶ │/implement│ ─▶ │ /code-  │ ──▶ │ PR +   │
+ │Task /│ ───▶ │$grill- │ ──▶ │$to-spec│ ──▶ │$implement│ ─▶ │ $code-  │ ──▶ │ PR +   │
  │Minuta│      │   me   │     │ (Spec) │     │ (feat/*)│    │ review  │     │ Evid.  │
  └──────┘      └────────┘     └────────┘     └─────────┘    └─────────┘     └────────┘
 ```
@@ -38,18 +38,18 @@ Las tareas se originan en Notion (la interfaz de gestión del negocio, §11.1).
   ```
 - **Antes de seguir:** actualiza el estado de la tarea en Notion a "En curso" y asigna el responsable (§11.1.4). Este bloqueo lo hace el agente, no un workflow; sin él, dos sesiones pueden tomar la misma tarea en paralelo.
 
-### Paso 2: Interrogatorio con el Vault (`/grill-me`)
+### Paso 2: Interrogatorio con el Vault (`$grill-me` en Codex)
 Antes de tocar una sola línea de código, invoca:
-```bash
-/grill-me
+```text
+$grill-me
 ```
 - **Qué hace:** El agente lee obligatoriamente `.sentina/manifiesto.yaml`, `contexto/`, `bases/`, `esquema/` y las relaciones existentes.
 - **Cómo actúa:** Inicia una entrevista por rondas. El agente busca hechos en el repo por su cuenta y te presenta únicamente las decisiones abiertas, cada una con su respuesta sugerida (`➡️`). Cuestiona supuestos tácitos, dependencias ocultas y riesgos de seguridad.
 
-### Paso 3: De Minuta a Spec Atómico (`/to-spec`)
+### Paso 3: De Minuta a Spec Atómico (`$to-spec` en Codex)
 Una vez consensuados los requerimientos en el interrogatorio o a partir de una minuta de reunión con Notion AI, ejecuta:
-```bash
-/to-spec
+```text
+$to-spec
 ```
 - **Qué hace:** Sintetiza la discusión en una especificación técnica formal.
 - **Qué define obligatoriamente:**
@@ -59,12 +59,12 @@ Una vez consensuados los requerimientos en el interrogatorio o a partir de una m
   - Costuras de prueba y criterios de aceptación verificables.
   - Validación preventiva de las 4 tablas anti-racionalización.
 
-### Paso 4: Construcción Disciplinada (`/implement`)
+### Paso 4: Construcción Disciplinada (`$implement` en Codex)
 Con el spec aprobado por ti, lanza:
-```bash
-/implement
+```text
+$implement
 ```
-- **Qué hace:** Trabaja dentro de la rama `feat/tarea-*` apegándose al spec. Conduce la implementación mediante pruebas test-first ([`/tdd`](./skills/engineering/tdd/SKILL.md)) y ejecuta validaciones locales (`python3 .github/scripts/guardian.py` y tests de la suite).
+- **Qué hace:** Trabaja dentro de la rama `feat/tarea-*` apegándose al spec. Conduce la implementación mediante pruebas test-first ([`tdd`](./skills/engineering/tdd/SKILL.md)) y ejecuta validaciones locales (`python3 .github/scripts/guardian.py` y tests de la suite).
 
 ### Paso 5: Evidencia Obligatoria (§8.1, §9 y §14.2)
 Si tu cambio interactúa con sistemas externos (APIs, CRM, Notion, webhooks) o altera contratos:
@@ -73,7 +73,7 @@ Si tu cambio interactúa con sistemas externos (APIs, CRM, Notion, webhooks) o a
 - Tras escribir o superar nodos del grafo, sincroniza `index.md`, `log.md` y `hot.md` del vault (§13.3) antes de dar la tarea por completa.
 
 ### Paso 6: Revisión y Sincronización Outbound
-- Se corre [`/code-review`](./skills/engineering/code-review/SKILL.md) para auditar el diff (estándares, cero PII de clientes, sin URLs reales de webhooks).
+- Se corre [`code-review`](./skills/engineering/code-review/SKILL.md), `$code-review` en Codex, para auditar el diff (estándares, cero PII de clientes, sin URLs reales de webhooks).
 - Se abre el Pull Request hacia `main`.
 - Al fusionarse, GitHub Actions ejecuta `.github/workflows/notion-publish-context.yml`, publicando automáticamente el contexto y la evidencia en Notion (§11.2).
 
@@ -93,7 +93,7 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 | Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
 |---|---|---|
 | *"Solo necesitamos etiquetar el contacto al dispararse la automatización"* | Una etiqueta sin salida documentada es un bucle permanente y atrapa contactos | Si el cambio toca `sentina-ghl`, **prohibido generar código, JSON o YAML sin haber documentado la columna 'Quién la quita' en `esquema/etiquetas.md`**. |
-| *"Luego agregamos la condición de salida cuando probemos el flujo en vivo"* | La seguridad de esquemas es previa a la ejecución | Exigir en `/to-spec` y validar en `/implement` que toda etiqueta referenciada tenga sus 5 columnas completas (§6.1). |
+| *"Luego agregamos la condición de salida cuando probemos el flujo en vivo"* | La seguridad de esquemas es previa a la ejecución | Exigir en `to-spec` y validar en `implement` que toda etiqueta referenciada tenga sus 5 columnas completas (§6.1). |
 
 ### 3. Seguridad, Privacidad y Secretos
 | Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
@@ -113,20 +113,20 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 
 ### A. El Enrutador Central
 
-* [`/ask-sentina`](./skills/engineering/ask-sentina/SKILL.md): **¿No sabes qué skill usar? Ejecuta esta.** Te guía exactamente por qué camino ir según en qué fase de tu tarea te encuentres (desde la idea inicial hasta el PR).
+* [`ask-sentina`](./skills/engineering/ask-sentina/SKILL.md): **¿No sabes qué skill usar? Ejecuta `$ask-sentina` en Codex.** Te guía exactamente por qué camino ir según en qué fase de tu tarea te encuentres (desde la idea inicial hasta el PR).
 
 ---
 
 ### B. Habilidades de Ingeniería: Flujo de Trabajo (User-Invoked)
-*Invocadas manualmente por ti mediante un comando con barra diagonal (`/`).*
+*Invocadas manualmente por ti. En Codex utiliza `$nombre-del-skill`; en Claude Code utiliza `/nombre-del-skill`.*
 
-* [`/to-spec`](./skills/engineering/to-spec/SKILL.md): Transforma la conversación, minuta de Notion AI o requerimiento en una especificación técnica formal atómica. Obliga a definir archivos, nodos de grafo, pruebas y cumplimiento de las 4 tablas.
-* [`/implement`](./skills/engineering/implement/SKILL.md): Conduce el desarrollo estricto en la rama `feat/tarea-*`. Hace cumplir las pruebas locales, la generación de evidencia y bloquea atajos mediante las tablas anti-racionalización.
-* [`/to-tickets`](./skills/engineering/to-tickets/SKILL.md): Desglosa un plan grande en rebanadas verticales (*tracer bullets*) independientes con dependencias de bloqueo explícitas.
-* [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md): Sesión de interrogatorio que además aterriza el modelo de dominio en repositorios que mantienen documentación de contexto.
-* [`/triage`](./skills/engineering/triage/SKILL.md): Gestiona el triaje de incidencias o requerimientos externos pasando por estados formales (`needs-triage`, `ready-for-agent`, etc.).
-* [`/improve-codebase-architecture`](./skills/engineering/improve-codebase-architecture/SKILL.md): Analiza el código en busca de módulos superficiales que deban rediseñarse como módulos profundos y presenta un reporte visual.
-* [`/wayfinder`](./skills/engineering/wayfinder/SKILL.md): Para proyectos gigantes o difusos ("en la niebla"). Mapea un árbol de tickets de decisión que se van resolviendo uno a uno antes de intentar programar.
+* [`to-spec`](./skills/engineering/to-spec/SKILL.md): Transforma la conversación, minuta de Notion AI o requerimiento en una especificación técnica formal atómica. Obliga a definir archivos, nodos de grafo, pruebas y cumplimiento de las 4 tablas.
+* [`implement`](./skills/engineering/implement/SKILL.md): Conduce el desarrollo estricto en la rama `feat/tarea-*`. Hace cumplir las pruebas locales, la generación de evidencia y bloquea atajos mediante las tablas anti-racionalización.
+* [`to-tickets`](./skills/engineering/to-tickets/SKILL.md): Desglosa un plan grande en rebanadas verticales (*tracer bullets*) independientes con dependencias de bloqueo explícitas.
+* [`grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md): Sesión de interrogatorio que además aterriza el modelo de dominio en repositorios que mantienen documentación de contexto.
+* [`triage`](./skills/engineering/triage/SKILL.md): Gestiona el triaje de incidencias o requerimientos externos pasando por estados formales (`needs-triage`, `ready-for-agent`, etc.).
+* [`improve-codebase-architecture`](./skills/engineering/improve-codebase-architecture/SKILL.md): Analiza el código en busca de módulos superficiales que deban rediseñarse como módulos profundos y presenta un reporte visual.
+* [`wayfinder`](./skills/engineering/wayfinder/SKILL.md): Para proyectos gigantes o difusos ("en la niebla"). Mapea un árbol de tickets de decisión que se van resolviendo uno a uno antes de intentar programar.
 
 ---
 
@@ -154,11 +154,11 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 
 ### D. Habilidades de Productividad
 
-* [`/grill-me`](./skills/productivity/grill-me/SKILL.md): Interrogatorio implacable inicial. Lee el contexto del Vault de Sentina y desafía cualquier requerimiento o idea antes de planear.
+* [`grill-me`](./skills/productivity/grill-me/SKILL.md): Interrogatorio implacable inicial. Lee el contexto del Vault de Sentina y desafía cualquier requerimiento o idea antes de planear.
 * [`grilling`](./skills/productivity/grilling/SKILL.md): El motor interno de entrevistas por rondas basado en la frontera del árbol de diseño.
-* [`/handoff`](./skills/productivity/handoff/SKILL.md): Resume el estado actual en un documento Markdown portable para continuar la sesión en otro agente o ventana.
-* [`/to-questionnaire`](./skills/productivity/to-questionnaire/SKILL.md): Cuando una decisión depende de alguien fuera del equipo técnico, genera un cuestionario formal para enviárselo a ese tercero.
-* [`/wait-what`](./skills/productivity/wait-what/SKILL.md): Si el agente usó un término confuso o no entendiste una respuesta, invócalo para que te vuelva a explicar la idea en lenguaje llano usando el glosario.
+* [`handoff`](./skills/productivity/handoff/SKILL.md): Resume el estado actual en un documento Markdown portable para continuar la sesión en otro agente o ventana.
+* [`to-questionnaire`](./skills/productivity/to-questionnaire/SKILL.md): Cuando una decisión depende de alguien fuera del equipo técnico, genera un cuestionario formal para enviárselo a ese tercero.
+* [`wait-what`](./skills/productivity/wait-what/SKILL.md): Si el agente usó un término confuso o no entendiste una respuesta, invócalo para que te vuelva a explicar la idea en lenguaje llano usando el glosario.
 * [`writing-for-agents`](./skills/productivity/writing-for-agents/SKILL.md): Guía de referencia sobre cómo redactar instrucciones, reglas y documentos técnicos para que sean consumidos eficazmente por agentes.
 * [`teach`](./skills/productivity/teach/SKILL.md): Modo de aprendizaje interactivo multi-sesión dentro del espacio de trabajo.
 
@@ -179,11 +179,21 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 El repositorio está listo para funcionar automáticamente en los entornos de trabajo principales:
 
 ### 1. Enlace Local Automático (Recomendado)
-Para vincular todas las habilidades en tu máquina tanto para **Claude Code** como para **Codex** y otros agentes:
+Para vincular las habilidades estables de `engineering/` y `productivity/` en tu máquina tanto para **Claude Code** como para **Codex** y otros agentes:
 ```bash
 bash scripts/link-skills.sh
 ```
 Esto crea enlaces simbólicos en `~/.claude/skills` y `~/.agents/skills`. Cada vez que hagas `git pull` en este repo, tus herramientas se actualizarán inmediatamente.
+
+Para incluir también las habilidades beta de `skills/in-progress/`:
+
+```bash
+bash scripts/link-skills.sh --include-in-progress
+```
+
+Al ejecutar después el instalador sin esa opción, se retiran únicamente los enlaces beta creados desde este repositorio. `misc/` y `deprecated/` nunca se instalan.
+
+En Codex, ejecuta `/skills` para abrir el selector y escribe `$nombre-del-skill` para invocar una habilidad. En Claude Code, utiliza `/nombre-del-skill`.
 
 ### 2. Uso como Plugin Nativo
 - **Claude Code:** Configurado mediante el manifiesto [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json).
@@ -193,6 +203,6 @@ Esto crea enlaces simbólicos en `~/.claude/skills` y `~/.agents/skills`. Cada v
 
 ## 6. Tres Consejos de Oro para Desarrollar en Sentina
 
-1. **Nunca dejes que el agente empiece a programar sin un spec:** Pasa siempre por `/grill-me` y `/to-spec`. Diez minutos de preguntas previas ahorran horas de refactorizaciones.
+1. **Nunca dejes que el agente empiece a programar sin un spec:** En Codex, pasa siempre por `$grill-me` y `$to-spec`. Diez minutos de preguntas previas ahorran horas de refactorizaciones.
 2. **Exige la evidencia en la rama:** El merge en `main` dispara la publicación automática hacia Notion. Si la evidencia no está en `evidencia/<id>/meta.yaml` antes de abrir el PR, el workflow no tendrá nada que reportar.
-3. **Consulta al enrutador cuando tengas dudas:** Escribe `/ask-sentina` y deja que el sistema te indique qué comando te conviene ejecutar a continuación.
+3. **Consulta al enrutador cuando tengas dudas:** Escribe `$ask-sentina` en Codex y deja que el sistema te indique qué habilidad te conviene ejecutar a continuación.
