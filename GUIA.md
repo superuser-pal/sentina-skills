@@ -36,6 +36,7 @@ Las tareas se originan en Notion (la interfaz de gestión del negocio, §11.1).
   ```bash
   git checkout -b feat/tarea-<id-de-notion>
   ```
+- **Antes de seguir:** actualiza el estado de la tarea en Notion a "En curso" y asigna el responsable (§11.1.4). Este bloqueo lo hace el agente, no un workflow; sin él, dos sesiones pueden tomar la misma tarea en paralelo.
 
 ### Paso 2: Interrogatorio con el Vault (`/grill-me`)
 Antes de tocar una sola línea de código, invoca:
@@ -65,10 +66,11 @@ Con el spec aprobado por ti, lanza:
 ```
 - **Qué hace:** Trabaja dentro de la rama `feat/tarea-*` apegándose al spec. Conduce la implementación mediante pruebas test-first ([`/tdd`](./skills/engineering/tdd/SKILL.md)) y ejecuta validaciones locales (`python3 .github/scripts/guardian.py` y tests de la suite).
 
-### Paso 5: Evidencia Obligatoria (§8.1 y §14.2)
+### Paso 5: Evidencia Obligatoria (§8.1, §9 y §14.2)
 Si tu cambio interactúa con sistemas externos (APIs, CRM, Notion, webhooks) o altera contratos:
-- Se genera obligatoriamente el archivo `evidencia/<id>/meta.yaml` acompañado del log o artefacto técnico reproducible.
+- Se genera obligatoriamente el archivo `evidencia/<id>/meta.yaml` con el schema fijo de §9: `id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`; acompañado del log o artefacto técnico reproducible.
 - **La evidencia se comitea en la rama antes de abrir el Pull Request.**
+- Tras escribir o superar nodos del grafo, sincroniza `index.md`, `log.md` y `hot.md` del vault (§13.3) antes de dar la tarea por completa.
 
 ### Paso 6: Revisión y Sincronización Outbound
 - Se corre [`/code-review`](./skills/engineering/code-review/SKILL.md) para auditar el diff (estándares, cero PII de clientes, sin URLs reales de webhooks).

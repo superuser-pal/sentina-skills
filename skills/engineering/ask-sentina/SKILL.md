@@ -18,29 +18,34 @@ Este es el camino estándar para todo desarrollo en repositorios Sentina (`senti
    - La tarea nace en Notion (§11.1).
    - Crea y cambia a la rama de trabajo aislada: `git checkout -b feat/tarea-<id-o-slug>`.
 
-2. **Auditoría e Interrogatorio con el Vault → `/grill-me`:**
+2. **Bloqueo de concurrencia en Notion (§11.1.4):**
+   - Antes de escribir una sola línea de código o spec, actualiza el estado de la tarea en Notion a **"En curso"** y asigna explícitamente el responsable (el usuario o el agente que ejecuta).
+   - Este bloqueo es obligatorio y del agente, no de un workflow de CI: previene que otra sesión o agente tome la misma tarea en paralelo. Si no tienes acceso directo a la API de Notion en esta sesión, pide al usuario que lo confirme antes de continuar.
+
+3. **Auditoría e Interrogatorio con el Vault → `/grill-me`:**
    - El agente lee el contexto del Vault (`contexto/`, `bases/`, `esquema/`, aristas `relationships`).
    - Cuestiona activamente los requerimientos, supuestos tácitos, dependencias ocultas y riesgos de seguridad mediante rondas de preguntas con respuestas sugeridas (patrón frontera).
    - No se escribe código en esta fase.
 
-3. **De Minuta / Requerimiento a Spec Atómico → `/to-spec`:**
+4. **De Minuta / Requerimiento a Spec Atómico → `/to-spec`:**
    - Formaliza el acuerdo en una especificación técnica.
-   - Declara: archivos a tocar, nodos de grafo a crear o superar (`id: dec:<slug>`, `valid_from`, `replaces`), aristas tipadas (`depende_de`), casos de prueba y las 4 tablas anti-racionalización.
+   - Declara: archivos a tocar, nodos de grafo a crear o superar con su frontmatter completo (`id: dec:<slug>`, `valid_from`, `replaces`, y el resto de claves requeridas por §3.1), aristas tipadas (`depende_de`), stubs externos si aplica, casos de prueba y las 4 tablas anti-racionalización.
    - El usuario aprueba el spec antes de proceder.
 
-4. **Ejecución Disciplinada y Validada → `/implement`:**
+5. **Ejecución Disciplinada y Validada → `/implement`:**
    - Implementa los cambios en la rama `feat/tarea-*` siguiendo rigurosamente el spec.
    - Conduce el desarrollo mediante pruebas (`/tdd`).
    - Ejecuta validaciones locales (`python3 .github/scripts/guardian.py` y tests del proyecto).
-   - Genera evidencia en `evidencia/<id>/meta.yaml` y adjunta logs/artefactos reproducibles.
+   - Genera evidencia en `evidencia/<id>/meta.yaml` (schema completo §9) y adjunta logs/artefactos reproducibles.
+   - Sincroniza `index.md`, `log.md` y `hot.md` del vault tras escribir o superar nodos (§13.3).
    - Respeta de forma inflexible las 4 Tablas Anti-Racionalización.
 
-5. **Revisión de Calidad y Seguridad → `/code-review` (o `/code-review-and-quality`):**
+6. **Revisión de Calidad y Seguridad → `/code-review` (o `/code-review-and-quality`):**
    - Audita el diff contra la especificación, estándares de arquitectura, ausencia total de PII de clientes y cumplimiento de esquemas.
 
-6. **Pull Request y Sincronización Outbound:**
+7. **Pull Request y Sincronización Outbound:**
    - Comitea la evidencia en la rama antes de abrir el PR.
-   - Al fusionar a `main`, los workflows de GitHub Actions publican el contexto y la evidencia en Notion (§11.2).
+   - Al fusionar a `main`, los workflows de GitHub Actions transicionan la tarea de Notion a "Completada" y publican el contexto y la evidencia (§11.2). Esta parte outbound es responsabilidad del workflow, a diferencia del bloqueo inbound del paso 2, que es responsabilidad del agente.
 
 ---
 

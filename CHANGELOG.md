@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.1.0
+
+Closed gaps found by an architecture-vs-implementation audit against `sentina-repos-manifiesto-v2.md` (v2.3):
+
+- **`to-spec`**: node-creation template now lists the full required frontmatter key set (§3.1), not just `id`/`valid_from`/`relationships`; added a check for external-repo stubs (`contexto/sistemas/` or `contexto/referencias/`, §3.2 regla 4); the evidence plan now points at the exact §9 schema; added a note for §12.2 steps 3-4 (updating `contexto/alcance.md` and deriving Notion backlog tasks) when the spec originates from a Notion AI minuta.
+- **`implement`**: evidence step now includes the literal `evidencia/<id>/meta.yaml` schema from §9 (`id, fecha, autor, tipo, sistema, afirmacion, resultado, tarea_notion, artefactos, decision_relacionada`) instead of only naming the file; added a step to sync `index.md`, `log.md`, and `hot.md` (via `wiki-update`) after writing or superseding vault nodes, and to verify/create external stubs before closing the task, whereas previously the dev-lifecycle skills never touched the vault's own accounting files.
+- **`ask-sentina`**: inserted the missing Notion concurrency-lock step (§11.1.4, agent sets task to "En curso" + assigns owner) between branch creation and `/grill-me`; clarified that the inbound lock is the agent's job while the outbound status transition is the CI workflow's job.
+- **`grill-me`**: added a prerequisite check for the concurrency lock, a question about external-system stubs, and a reminder that Notion base IDs and unrestricted Loom/Drive links count as credentials (§8.3), not just webhook URLs.
+- **`security-and-hardening`**: added a "Sentina Secrets" section (§8.3) covering webhook URLs, Notion base/page IDs, unrestricted Loom/Drive links, and session IDs in example payloads, none of which were covered by the generic OWASP secrets guidance imported from `addyosmani/agent-skills`; extended the Red Flags and Verification checklists accordingly.
+- **`git-workflow-and-versioning`**: fixed a real contradiction, this skill (imported unmodified from `addyosmani/agent-skills`) still taught generic `feature/<description>` branch naming, conflicting with the mandatory `feat/tarea-<id>` / `fix/tarea-<id>` convention (§11.1.3) that `ask-sentina`, `grill-me`, and `implement` all assume. Added an explicit Sentina override at the top of the Branching section and fixed the examples.
+
+Not fixed in this pass (flagged, needs a design decision rather than a mechanical edit): there is still no skill that performs the Notion API write for the concurrency lock or the outbound status transitions, only the manual/reminder text added above; and GHL's "5 columns, quién la quita" rule remains discipline-only, with no automated linter equivalent to `guardian.py` for `esquema/etiquetas.md`.
+
 ## 2.0.0
 
 - Fork and adaptation for the Sentina ecosystem conforming to `sentina-repos-manifiesto-v2.md` (§14).

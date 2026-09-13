@@ -28,9 +28,26 @@ Implementa el trabajo especificado en una especificación técnica formal o tare
 
 4. **Generación obligatoria de evidencia:**
    - Todo PR que interactúe con sistemas externos (Notion, GHL, webhooks, APIs) o modifique contratos **requiere forzosamente poblar `evidencia/<id>/meta.yaml` y su artefacto o log reproducible**.
+   - `meta.yaml` sigue el schema fijo de §9 del manifiesto, sin campos opcionales omitidos ni `null`:
+     ```yaml
+     id: <id-del-hecho>
+     fecha: YYYY-MM-DD
+     autor: <usuario-o-agente>
+     tipo: <api|webhook|migracion|integracion|...>
+     sistema: <sistema-tocado>
+     afirmacion: <qué se afirma que funciona>
+     resultado: <qué ocurrió realmente, con datos anonimizados>
+     tarea_notion: <id-de-la-tarea-en-notion>
+     artefactos: [<rutas-a-logs-o-capturas-anonimizadas>]
+     decision_relacionada: "[[dec-<slug>]]"   # solo si el hecho deriva de una decisión
+     ```
    - La evidencia debe estar commiteada en la rama antes de abrir el PR para que `.github/workflows/notion-publish-context.yml` la publique al fusionar en `main`.
 
-5. **Revisión final antes de PR:**
+5. **Sincronización de la contabilidad del vault:**
+   - Después de crear o superar cualquier nodo en `contexto/` (o en otra categoría pura), no te detengas en el archivo del nodo: invoca la skill `wiki-update` (o, si no está disponible, actualiza a mano) para refrescar `index.md`, `log.md` (verbo `ACTUALIZACION` o `CAPTURA` según §13.3, con la fecha y el `id` afectado) y `hot.md`.
+   - Si el spec declaró un stub externo nuevo o a verificar (`contexto/sistemas/` o `contexto/referencias/`), créalo o confírmalo antes de dar la tarea por completa: una arista sin stub resoluble falla el guardián (§3.2 regla 4).
+
+6. **Revisión final antes de PR:**
    - Antes de abrir el PR, ejecuta una revisión de código (`/code-review` o `/code-review-and-quality`) para verificar estándares, ausencia de PII y apego a la especificación.
 
 ---
@@ -60,5 +77,5 @@ Como agente de IA, estás programado para tender a justificar atajos bajo el pre
 ### 4. Regla de Evidencia Obligatoria
 | Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
 |---|---|---|
-| *"El cambio fue una llamada API que dio 200, no hace falta guardar evidencia formal"* | Si no hay evidencia reproducible, el hecho no existe técnicamente | Todo PR que toque o interactúe con sistemas externos (Notion, GHL, webhooks, APIs) **requiere forzosamente poblar `evidencia/<id>/meta.yaml` y su correspondiente artefacto o log**. |
+| *"El cambio fue una llamada API que dio 200, no hace falta guardar evidencia formal"* | Si no hay evidencia reproducible, el hecho no existe técnicamente | Todo PR que toque o interactúe con sistemas externos (Notion, GHL, webhooks, APIs) **requiere forzosamente poblar `evidencia/<id>/meta.yaml` con el schema completo de §9 (`id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`) y su correspondiente artefacto o log**. |
 | *"La evidencia se puede subir en un commit posterior tras el merge"* | El merge en `main` dispara el workflow automático a Notion | La evidencia debe estar commiteada en la rama antes de abrir el PR para que `.github/workflows/notion-publish-context.yml` la publique al fusionar. |

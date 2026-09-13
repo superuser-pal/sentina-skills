@@ -8,6 +8,10 @@ disable-model-invocation: true
 
 Audita y cuestiona activamente los requerimientos, minutas de Notion AI o solicitudes de usuario antes de generar cualquier propuesta de código o especificación técnica.
 
+## Prerrequisito
+
+Si la tarea viene de Notion, confirma que ya se hizo el bloqueo de concurrencia (§11.1.4): estado "En curso" y responsable asignado en la tarea de Notion. Si no se ha hecho, adviértelo antes de continuar: interrogar y planear sobre una tarea sin bloquear invita a que otra sesión tome el mismo trabajo en paralelo.
+
 ## Proceso
 
 ### 1. Lectura obligatoria del contexto local
@@ -28,8 +32,9 @@ Aplica la disciplina de `/grilling`:
 - **Encontrar hechos en el repositorio es tu trabajo, nunca del usuario.** Inspecciona archivos, tipos, relaciones y esquemas por tu cuenta; no preguntes lo que puedes leer en el vault. Las decisiones de negocio, diseño y alcance son del usuario.
 - Cuestiona activamente:
   - ¿Qué dependencias ocultas o efectos colaterales existen con otros nodos (`depende_de`)?
+  - ¿Alguna dependencia pertenece a otro repo? Si es así, ¿existe ya su stub local (`contexto/sistemas/` o `contexto/referencias/`, §3.2 regla 4) o hay que crearlo?
   - Si toca `sentina-ghl`, ¿se han definido las 5 columnas de toda etiqueta y quién la retira?
-  - ¿Hay credenciales, webhooks o datos de clientes involucrados que deban protegerse o anonimizarse?
+  - ¿Hay credenciales, webhooks o datos de clientes involucrados que deban protegerse o anonimizarse? Recuerda que un ID de base de Notion compartida o un enlace de Loom/Drive sin restricción también cuentan como credencial (§8.3).
   - ¿Requiere crear o superar una decisión (`contexto/decisiones/dec-<slug>.md`)?
 
 ### 4. Cierre

@@ -375,6 +375,18 @@ git diff --cached | grep -i "password\|secret\|api_key\|token"
 
 **If a secret is ever committed, rotate it.** Deleting the line or rewriting history is not enough, assume it's compromised the moment it reaches a remote. Revoke and reissue the key first, then purge it from history.
 
+### Sentina Secrets (manifiesto §8.3)
+
+In a Sentina repo, "secret" is broader than API keys and tokens. Also treat these as credentials that must never be committed, even in test JSON, example payloads, or `.sentina/manifiesto.yaml` (which lists secret *names* only, never values):
+
+- **Inbound webhook URLs** (GHL, n8n, Make): the URL itself is the trigger key. Reference it only via an environment variable name, registered in `webhooks/endpoints.md`, never the literal URL.
+- **Notion database/page IDs**, when the integration sharing that base is not public.
+- **Unrestricted Loom or Drive links.**
+- **Session or user IDs inside example payloads.**
+- Any tag in `_meta/taxonomy.md` under `visibility/pii` is a signal the field must not appear in a committed example, anonymize it first (§8.1).
+
+Cross-check `metodo/estandares/secretos.md` (in `sentina-notion`) for the authoritative list before assuming something is safe to write down.
+
 ## Data Privacy & Compliance
 
 Securing data is "can an attacker read it?" Privacy is "should *we* even hold it, and for how long?", a separate question that hardening doesn't answer. The cheapest data to protect, breach, and comply over is the data you never collected. Treat personal data as a liability to minimize, not an asset to hoard.
@@ -505,6 +517,7 @@ For detailed security checklists and pre-commit verification steps, see `../../r
 - Personal data collected with no stated purpose, retention limit, or deletion path
 - PII sent to analytics/ad/LLM vendors with no consent or data-processing agreement
 - "Delete my account" that only flips a flag while the personal data lingers in stores and backups
+- (Sentina) A literal webhook URL, Notion database ID, or unrestricted Loom/Drive link in a JSON/YAML file, test fixture, or `.sentina/manifiesto.yaml` value
 
 ## Verification
 
@@ -522,3 +535,4 @@ After implementing security-relevant code:
 - [ ] LLM/model output validated and encoded before use (if AI features present)
 - [ ] Personal data is classified, minimized to a stated purpose, and has a retention limit
 - [ ] Deletion and export requests work end-to-end (including backups, caches, and analytics copies)
+- [ ] (Sentina) No literal webhook URL, Notion database ID, or unrestricted Loom/Drive link anywhere in the diff, including test fixtures

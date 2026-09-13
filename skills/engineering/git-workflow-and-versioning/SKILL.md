@@ -120,14 +120,16 @@ Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See t
 
 ## Branching Strategy
 
+**In a Sentina repo, the branch-naming convention below is fixed and overrides this section's generic scheme (manifiesto §11.1.3): every task branch is `feat/tarea-<id-o-slug>` or `fix/tarea-<id-o-slug>`, where `tarea-*` is the Notion task id or its slug. This is what `ask-sentina`, `grill-me`, and `implement` assume; do not fall back to `feature/<description>` in a Sentina repo.** The generic scheme below applies to non-Sentina projects, or to Sentina chores/refactors with no Notion task backing them.
+
 ### Feature Branches
 
 ```
 main (always deployable)
   │
-  ├── feature/task-creation    ← One feature per branch
-  ├── feature/user-settings    ← Parallel work
-  └── fix/duplicate-tasks      ← Bug fixes
+  ├── feat/tarea-task-creation    ← One feature per branch
+  ├── feat/tarea-user-settings    ← Parallel work
+  └── fix/tarea-duplicate-tasks   ← Bug fixes
 ```
 
 - Branch from `main` (or the team's default branch)
@@ -138,6 +140,11 @@ main (always deployable)
 ### Branch Naming
 
 ```
+Sentina (mandatory, §11.1.3):
+feat/tarea-<id-o-slug>         → feat/tarea-migrar-ghl
+fix/tarea-<id-o-slug>          → fix/tarea-duplicate-tasks
+
+Generic (non-Sentina projects, or Sentina chores/refactors with no Notion task):
 feature/<short-description>   → feature/task-creation
 fix/<short-description>       → fix/duplicate-tasks
 chore/<short-description>     → chore/update-deps
@@ -149,9 +156,9 @@ refactor/<short-description>  → refactor/auth-module
 For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
 
 ```bash
-# Create a worktree for a feature branch
-git worktree add ../project-feature-a feature/task-creation
-git worktree add ../project-feature-b feature/user-settings
+# Create a worktree for a feature branch (Sentina: feat/tarea-<id-o-slug>)
+git worktree add ../project-feature-a feat/tarea-task-creation
+git worktree add ../project-feature-b feat/tarea-user-settings
 
 # Each worktree is a separate directory with its own branch
 # Agents can work in parallel without interfering
