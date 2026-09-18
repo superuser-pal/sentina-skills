@@ -8,6 +8,10 @@ disable-model-invocation: true
 
 A mandatory manual gate between `/code-review` and opening the Pull Request. Generates a test document from the spec's acceptance criteria, and a human runs it against the real, live system before continuing.
 
+## Prerequisite
+
+This skill assumes a Sentina repo: confirm `.sentina/manifiesto.yaml` exists at the repo root (see `.agents/sentina-mode.md`). If it doesn't, stop: the `evidencia/<id>/` path and the `feat/tarea-<id>` lookup below don't apply. Tell the user to use `ask-sentina` for the generic path instead, a plain manual pass against the acceptance criteria, recorded wherever the project keeps its own notes.
+
 ## Process
 
 1. **Locate the spec and the evidence `<id>`:**

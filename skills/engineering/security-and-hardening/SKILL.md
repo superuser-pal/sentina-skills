@@ -377,7 +377,7 @@ git diff --cached | grep -i "password\|secret\|api_key\|token"
 
 ### Sentina Secrets (manifiesto §8.3)
 
-In a Sentina repo, "secret" is broader than API keys and tokens. Also treat these as credentials that must never be committed, even in test JSON, example payloads, or `.sentina/manifiesto.yaml` (which lists secret *names* only, never values):
+**In a Sentina repo** (`.sentina/manifiesto.yaml` present at the repo root, see `.agents/sentina-mode.md`), "secret" is broader than API keys and tokens. Skip this subsection, and every other `(Sentina)`-tagged item in this file, entirely outside a Sentina repo. Also treat these as credentials that must never be committed, even in test JSON, example payloads, or `.sentina/manifiesto.yaml` (which lists secret *names* only, never values):
 
 - **Inbound webhook URLs** (GHL, n8n, Make): the URL itself is the trigger key. Reference it only via an environment variable name, registered in `webhooks/endpoints.md`, never the literal URL.
 - **Notion database/page IDs**, when the integration sharing that base is not public.

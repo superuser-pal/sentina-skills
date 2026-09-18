@@ -120,7 +120,7 @@ Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See t
 
 ## Branching Strategy
 
-**In a Sentina repo, the branch-naming convention below is fixed and overrides this section's generic scheme (manifiesto §11.1.3): every task branch is `feat/tarea-<id-o-slug>` or `fix/tarea-<id-o-slug>`, where `tarea-*` is the Notion task id or its slug. This is what `ask-sentina`, `grill-me`, and `implement` assume; do not fall back to `feature/<description>` in a Sentina repo.** The generic scheme below applies to non-Sentina projects, or to Sentina chores/refactors with no Notion task backing them.
+**In a Sentina repo (`.sentina/manifiesto.yaml` present at the repo root, see `.agents/sentina-mode.md`), the branch-naming convention below is fixed and overrides this section's generic scheme (manifiesto §11.1.3): every task branch is `feat/tarea-<id-o-slug>` or `fix/tarea-<id-o-slug>`, where `tarea-*` is the Notion task id or its slug. This is what `ask-sentina`, `grill-me`, and `implement` assume; do not fall back to `feature/<description>` in a Sentina repo.** The generic scheme below applies to non-Sentina projects (no `.sentina/manifiesto.yaml`), or to Sentina chores/refactors with no Notion task backing them.
 
 ### Feature Branches
 

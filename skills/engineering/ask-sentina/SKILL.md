@@ -10,6 +10,20 @@ The official router over the development skills in the Sentina ecosystem. Orient
 
 ---
 
+## 0. Detect the Repo's Mode
+
+Check whether `.sentina/manifiesto.yaml` exists at the repo root (see `.agents/sentina-mode.md`):
+
+- **Present:** this is a Sentina repo, follow the Main Flow below.
+- **Absent:** this isn't a Sentina repo, either a personal project, or a Sentina clone that hasn't run `/setup-sentina` yet. Don't use `/setup-sentina`, `/grill-me`, `/to-spec`, `/implement`, or `/acceptance-test`: they assume Notion and the vault. Instead, follow the generic path:
+  1. `/grilling` to interrogate the requirement.
+  2. Write a plain spec directly in the conversation (problem, files to touch, acceptance criteria): no vault frontmatter, no evidence schema.
+  3. `/tdd` at the agreed seams to build it.
+  4. `/code-review`: its Standards axis still applies generically, and the Sentina-only checks skip themselves.
+  5. `/git-workflow-and-versioning`'s generic branch naming (`feature/<description>`) and commit discipline, then open the PR.
+
+---
+
 ## 1. The Main Flow: Notion Task → PR with Evidence
 
 This is the standard path for all development in Sentina repositories (`sentina-notion`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`):
