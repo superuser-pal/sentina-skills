@@ -20,14 +20,14 @@ Las habilidades aquí reunidas están diseñadas para interactuar directamente c
 
 ## 2. El Flujo de Trabajo Sentina: De Notion a Producción (Paso a Paso)
 
-Todo ciclo de desarrollo en Sentina sigue un flujo disciplinado de 6 pasos:
+Todo ciclo de desarrollo en Sentina sigue un flujo disciplinado de 8 pasos:
 
 ```
-  NOTION          GRILL          SPEC           BUILD          REVIEW          SYNC
- ┌──────┐      ┌────────┐     ┌────────┐     ┌─────────┐    ┌─────────┐     ┌────────┐
- │Task /│ ───▶ │$grill- │ ──▶ │$to-spec│ ──▶ │$implement│ ─▶ │ $code-  │ ──▶ │ PR +   │
- │Minuta│      │   me   │     │ (Spec) │     │ (feat/*)│    │ review  │     │ Evid.  │
- └──────┘      └────────┘     └────────┘     └─────────┘    └─────────┘     └────────┘
+  NOTION         LOCK         GRILL          SPEC           BUILD          REVIEW          VERIFY           SYNC
+ ┌──────┐     ┌───────┐     ┌───────┐     ┌────────┐     ┌──────────┐     ┌──────┐     ┌────────────┐     ┌─────┐
+ │Task /│ ──▶ │Bloqueo│ ──▶ │$grill-│ ──▶ │$to-spec│ ──▶ │$implement│ ──▶ │$code-│ ──▶ │$acceptance-│ ──▶ │ PR +│
+ │Minuta│     │ Notion│     │   me  │     │ (Spec) │     │ (feat/*) │     │review│     │    test    │     │Evid.│
+ └──────┘     └───────┘     └───────┘     └────────┘     └──────────┘     └──────┘     └────────────┘     └─────┘
 ```
 
 ### Paso 1: Inbound desde Notion y rama aislada
@@ -36,9 +36,11 @@ Las tareas se originan en Notion (la interfaz de gestión del negocio, §11.1).
   ```bash
   git checkout -b feat/tarea-<id-de-notion>
   ```
-- **Antes de seguir:** actualiza el estado de la tarea en Notion a "En curso" y asigna el responsable (§11.1.4). Este bloqueo lo hace el agente, no un workflow; sin él, dos sesiones pueden tomar la misma tarea en paralelo.
 
-### Paso 2: Interrogatorio con el Vault (`$grill-me` en Codex)
+### Paso 2: Bloqueo de Concurrencia en Notion (§11.1.4)
+Antes de escribir una sola línea de código o spec, actualiza el estado de la tarea en Notion a "En curso" y asigna el responsable. Este bloqueo lo hace el agente, no un workflow; sin él, dos sesiones pueden tomar la misma tarea en paralelo.
+
+### Paso 3: Interrogatorio con el Vault (`$grill-me` en Codex)
 Antes de tocar una sola línea de código, invoca:
 ```text
 $grill-me
@@ -46,7 +48,7 @@ $grill-me
 - **Qué hace:** El agente lee obligatoriamente `.sentina/manifiesto.yaml`, `contexto/`, `bases/`, `esquema/` y las relaciones existentes.
 - **Cómo actúa:** Inicia una entrevista por rondas. El agente busca hechos en el repo por su cuenta y te presenta únicamente las decisiones abiertas, cada una con su respuesta sugerida (`➡️`). Cuestiona supuestos tácitos, dependencias ocultas y riesgos de seguridad.
 
-### Paso 3: De Minuta a Spec Atómico (`$to-spec` en Codex)
+### Paso 4: De Minuta a Spec Atómico (`$to-spec` en Codex)
 Una vez consensuados los requerimientos en el interrogatorio o a partir de una minuta de reunión con Notion AI, ejecuta:
 ```text
 $to-spec
@@ -57,23 +59,30 @@ $to-spec
   - Nodos del grafo a crear o superar (`id: dec:<slug>`, `valid_from`, `replaces`).
   - Aristas tipadas (`relationships: [{type: depende_de, target: "[[stem]]"}]`).
   - Costuras de prueba y criterios de aceptación verificables.
+  - La entrada de `CHANGELOG.md` que corresponda si el cambio es visible para el usuario final.
   - Validación preventiva de las 4 tablas anti-racionalización.
 
-### Paso 4: Construcción Disciplinada (`$implement` en Codex)
+### Paso 5: Construcción Disciplinada y Evidencia Obligatoria (`$implement` en Codex, §8.1, §9 y §14.2)
 Con el spec aprobado por ti, lanza:
 ```text
 $implement
 ```
 - **Qué hace:** Trabaja dentro de la rama `feat/tarea-*` apegándose al spec. Conduce la implementación mediante pruebas test-first ([`tdd`](./skills/engineering/tdd/SKILL.md)) y ejecuta validaciones locales (`python3 .github/scripts/guardian.py` y tests de la suite).
+- Si tu cambio interactúa con sistemas externos (APIs, CRM, Notion, webhooks) o altera contratos, se genera obligatoriamente el archivo `evidencia/<id>/meta.yaml` con el schema fijo de §9: `id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`; acompañado del log o artefacto técnico reproducible. **La evidencia se comitea en la rama antes de abrir el Pull Request.**
+- Tras escribir o superar nodos del grafo, sincroniza `index.md`, `log.md` y `hot.md` del vault (§13.3), y añade la entrada correspondiente a `CHANGELOG.md` cuando el cambio sea visible para el usuario final.
 
-### Paso 5: Evidencia Obligatoria (§8.1, §9 y §14.2)
-Si tu cambio interactúa con sistemas externos (APIs, CRM, Notion, webhooks) o altera contratos:
-- Se genera obligatoriamente el archivo `evidencia/<id>/meta.yaml` con el schema fijo de §9: `id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`; acompañado del log o artefacto técnico reproducible.
-- **La evidencia se comitea en la rama antes de abrir el Pull Request.**
-- Tras escribir o superar nodos del grafo, sincroniza `index.md`, `log.md` y `hot.md` del vault (§13.3) antes de dar la tarea por completa.
+### Paso 6: Revisión Multi-Eje (`$code-review` en Codex)
+Se corre [`code-review`](./skills/engineering/code-review/SKILL.md) para auditar el diff completo contra la especificación (estándares, cero PII de clientes, sin URLs reales de webhooks).
 
-### Paso 6: Revisión y Sincronización Outbound
-- Se corre [`code-review`](./skills/engineering/code-review/SKILL.md), `$code-review` en Codex, para auditar el diff (estándares, cero PII de clientes, sin URLs reales de webhooks).
+### Paso 7: Verificación Funcional en Vivo (`$acceptance-test` en Codex)
+Puerta manual y obligatoria antes del PR:
+```text
+$acceptance-test
+```
+- **Qué hace:** Genera `evidencia/<id>/acceptance-tests.md` a partir de los criterios de aceptación del spec, con los prompts o entradas literales para disparar cada flujo contra el sistema real.
+- **Qué haces tú:** Corres cada caso contra el sistema real en funcionamiento (no simulado) y registras lo observado. Sin este documento completo y sin defectos abiertos, no se abre el Pull Request (§14.2, tabla de evidencia).
+
+### Paso 8: Pull Request y Sincronización Outbound
 - Se abre el Pull Request hacia `main`.
 - Al fusionarse, GitHub Actions ejecuta `.github/workflows/notion-publish-context.yml`, publicando automáticamente el contexto y la evidencia en Notion (§11.2).
 
@@ -106,6 +115,7 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 |---|---|---|
 | *"El cambio fue una llamada API que dio 200, no hace falta guardar evidencia formal"* | Si no hay evidencia reproducible, el hecho no existe técnicamente | Todo PR que toque o interactúe con sistemas externos (Notion, GHL, webhooks, APIs) **requiere forzosamente poblar `evidencia/<id>/meta.yaml` y su correspondiente artefacto o log**. |
 | *"La evidencia se puede subir en un commit posterior tras el merge"* | El merge en `main` dispara el workflow automático a Notion | La evidencia debe estar commiteada en la rama antes de abrir el PR para que el CI la publique al fusionar. |
+| *"Los tests automatizados ya pasaron, no hace falta que alguien lo pruebe a mano"* | Un test automatizado prueba lo que el código cree que hace; solo un humano ejecutando el flujo real contra el sistema en vivo confirma que hace lo que el negocio pidió | Todo PR requiere `evidencia/<id>/acceptance-tests.md` completo (generado por `/acceptance-test`), con la sección "Observations" llena en cada caso y sin defectos abiertos, antes de abrir el Pull Request. |
 
 ---
 
@@ -122,6 +132,7 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 
 * [`to-spec`](./skills/engineering/to-spec/SKILL.md): Transforma la conversación, minuta de Notion AI o requerimiento en una especificación técnica formal atómica. Obliga a definir archivos, nodos de grafo, pruebas y cumplimiento de las 4 tablas.
 * [`implement`](./skills/engineering/implement/SKILL.md): Conduce el desarrollo estricto en la rama `feat/tarea-*`. Hace cumplir las pruebas locales, la generación de evidencia y bloquea atajos mediante las tablas anti-racionalización.
+* [`acceptance-test`](./skills/engineering/acceptance-test/SKILL.md): Genera el documento de pruebas de aceptación a partir de los criterios del spec y bloquea el PR hasta que un humano lo complete contra el sistema real.
 * [`to-tickets`](./skills/engineering/to-tickets/SKILL.md): Desglosa un plan grande en rebanadas verticales (*tracer bullets*) independientes con dependencias de bloqueo explícitas.
 * [`grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md): Sesión de interrogatorio que además aterriza el modelo de dominio en repositorios que mantienen documentación de contexto.
 * [`triage`](./skills/engineering/triage/SKILL.md): Gestiona el triaje de incidencias o requerimientos externos pasando por estados formales (`needs-triage`, `ready-for-agent`, etc.).
@@ -197,7 +208,7 @@ En Codex, ejecuta `/skills` para abrir el selector y escribe `$nombre-del-skill`
 
 ### 2. Uso como Plugin Nativo
 - **Claude Code:** Configurado mediante el manifiesto [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json).
-- **Codex:** Configurado mediante [`.codex-plugin/plugin.json`](./.codex-plugin/plugin.json), con metadatos completos en `agents/openai.yaml` en cada una de las 38 habilidades.
+- **Codex:** Configurado mediante [`.codex-plugin/plugin.json`](./.codex-plugin/plugin.json), con metadatos completos en `agents/openai.yaml` en cada habilidad.
 
 ---
 

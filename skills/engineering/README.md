@@ -9,6 +9,7 @@ Reachable only when explicitly invoked by the developer (`disable-model-invocati
 - **[ask-sentina](./ask-sentina/SKILL.md)**: Router for the Sentina development workflow: guides which skill to use from Notion task to PR with evidence.
 - **[to-spec](./to-spec/SKILL.md)**: Turn a Notion AI minute, conversation, or task into an atomic, formal technical specification with graph IDs and anti-rationalization validation.
 - **[implement](./implement/SKILL.md)**: Disciplined execution on branch `feat/tarea-*` following a spec, with local validation, required evidence in `evidencia/<id>/meta.yaml`, and strict anti-rationalization tables.
+- **[acceptance-test](./acceptance-test/SKILL.md)**: Generates the manual acceptance-test document from the spec's criteria and gates the PR on a human completing it against the live system.
 - **[to-tickets](./to-tickets/SKILL.md)**: Break a plan or spec into tracer-bullet slices, each declaring its blocking edges.
 - **[grill-with-docs](./grill-with-docs/SKILL.md)**: Grilling session that builds the project's domain model, sharpening terminology and updating documentation.
 - **[triage](./triage/SKILL.md)**: Move incoming issues through a state machine of triage roles.

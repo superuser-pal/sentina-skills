@@ -1,81 +1,83 @@
 ---
 name: implement
-description: "Ejecución aislada y disciplinada de una tarea en la rama feat/tarea-* siguiendo rigurosamente una especificación técnica, con validación local y tablas anti-racionalización."
+description: "Isolated, disciplined execution of a task on the feat/tarea-* branch, following a technical specification rigorously, with local validation and anti-rationalization tables."
 disable-model-invocation: true
 ---
 
-# Implement (Ejecución Aislada y Disciplinada)
+# Implement (Isolated, Disciplined Execution)
 
-Implementa el trabajo especificado en una especificación técnica formal o tarea aprobada. Conduce el desarrollo en una rama de trabajo aislada, ejecuta validaciones locales rigurosas, genera evidencia obligatoria y prepara el Pull Request.
+Implement the work described in a formal technical specification or approved task. Drive development on an isolated working branch, run rigorous local validation, generate mandatory evidence, and prepare the Pull Request.
 
 ---
 
-## Reglas de Ejecución
+## Execution Rules
 
-1. **Rama de trabajo aislada:**
-   - Todo trabajo se realiza en una rama con prefijo `feat/tarea-*` (o `fix/tarea-*`), donde `tarea-*` corresponde al identificador de la tarea en Notion.
-   - Jamás comitear directamente en `main`.
+1. **Isolated working branch:**
+   - All work happens on a branch prefixed `feat/tarea-*` (or `fix/tarea-*`), where `tarea-*` corresponds to the task's identifier in Notion.
+   - Never commit directly to `main`.
 
-2. **Apego estricto a la especificación:**
-   - Desarrolla exclusivamente los archivos y alcances declarados en el spec.
-   - Utiliza desarrollo guiado por pruebas (`/tdd`) en las costuras preacordadas.
+2. **Strict adherence to the specification:**
+   - Build exclusively the files and scope declared in the spec.
+   - Use test-driven development (`/tdd`) at the pre-agreed seams.
 
-3. **Validación local continua:**
-   - Ejecuta pruebas y comprobaciones de tipos frecuentemente.
-   - Ejecuta las herramientas de validación de Sentina antes de comitear:
-     - Guardian / linter del repositorio: e.g. `python3 .github/scripts/guardian.py` o scripts equivalentes del proyecto.
-     - Suite de tests completa del proyecto (`pytest`, `npm test`, etc.).
+3. **Continuous local validation:**
+   - Run tests and type checks frequently.
+   - Run Sentina's validation tooling before committing:
+     - The repo's guardian/linter: e.g. `python3 .github/scripts/guardian.py` or the project's equivalent scripts.
+     - The project's full test suite (`pytest`, `npm test`, etc.).
 
-4. **Generación obligatoria de evidencia:**
-   - Todo PR que interactúe con sistemas externos (Notion, GHL, webhooks, APIs) o modifique contratos **requiere forzosamente poblar `evidencia/<id>/meta.yaml` y su artefacto o log reproducible**.
-   - `meta.yaml` sigue el schema fijo de §9 del manifiesto, sin campos opcionales omitidos ni `null`:
+4. **Mandatory evidence generation:**
+   - Any PR that interacts with external systems (Notion, GHL, webhooks, APIs) or modifies contracts **is forcibly required to populate `evidencia/<id>/meta.yaml` and its reproducible artifact or log**.
+   - `meta.yaml` follows the manifest's fixed §9 schema, with no optional fields omitted or left `null`:
      ```yaml
-     id: <id-del-hecho>
+     id: <fact-id>
      fecha: YYYY-MM-DD
-     autor: <usuario-o-agente>
+     autor: <user-or-agent>
      tipo: <api|webhook|migracion|integracion|...>
-     sistema: <sistema-tocado>
-     afirmacion: <qué se afirma que funciona>
-     resultado: <qué ocurrió realmente, con datos anonimizados>
-     tarea_notion: <id-de-la-tarea-en-notion>
-     artefactos: [<rutas-a-logs-o-capturas-anonimizadas>]
-     decision_relacionada: "[[dec-<slug>]]"   # solo si el hecho deriva de una decisión
+     sistema: <system-touched>
+     afirmacion: <what is claimed to work>
+     resultado: <what actually happened, with anonymized data>
+     tarea_notion: <notion-task-id>
+     artefactos: [<paths-to-anonymized-logs-or-screenshots>]
+     decision_relacionada: "[[dec-<slug>]]"   # only if the fact derives from a decision
      ```
-   - La evidencia debe estar commiteada en la rama antes de abrir el PR para que `.github/workflows/notion-publish-context.yml` la publique al fusionar en `main`.
+   - The evidence must be committed on the branch before opening the PR, so that `.github/workflows/notion-publish-context.yml` publishes it on merge to `main`.
 
-5. **Sincronización de la contabilidad del vault:**
-   - Después de crear o superar cualquier nodo en `contexto/` (o en otra categoría pura), no te detengas en el archivo del nodo: invoca la skill `wiki-update` (o, si no está disponible, actualiza a mano) para refrescar `index.md`, `log.md` (verbo `ACTUALIZACION` o `CAPTURA` según §13.3, con la fecha y el `id` afectado) y `hot.md`.
-   - Si el spec declaró un stub externo nuevo o a verificar (`contexto/sistemas/` o `contexto/referencias/`), créalo o confírmalo antes de dar la tarea por completa: una arista sin stub resoluble falla el guardián (§3.2 regla 4).
+5. **Sync the vault's accounting:**
+   - After creating or superseding any node in `contexto/` (or another pure category), don't stop at the node's own file: invoke the `wiki-update` skill (or update by hand if unavailable) to refresh `index.md`, `log.md` (verb `ACTUALIZACION` or `CAPTURA` per §13.3, with the date and the affected `id`), and `hot.md`.
+   - If the spec declared a changelog entry (a change visible to the end user), append it under the right Keep-a-Changelog category in `CHANGELOG.md` (create the file from the fixed template if it doesn't exist yet; the section headers stay in English, the entry text goes in the target repo's own language), linking the `dec:<slug>` just written.
+   - If the spec declared a new or to-be-verified external stub (`contexto/sistemas/` or `contexto/referencias/`), create or confirm it before considering the task complete: an edge with no resolvable stub fails the guardian (§3.2 rule 4).
 
-6. **Revisión final antes de PR:**
-   - Antes de abrir el PR, ejecuta una revisión de código (`/code-review` o `/code-review-and-quality`) para verificar estándares, ausencia de PII y apego a la especificación.
+6. **Final review before the PR:**
+   - Before opening the PR, run a code review (`/code-review` or `/code-review-and-quality`) to verify standards, absence of PII, and adherence to the specification.
 
 ---
 
-## Inyección Anti-Racionalización (Inflexible)
+## Anti-Rationalization Injection (Non-Negotiable)
 
-Como agente de IA, estás programado para tender a justificar atajos bajo el pretexto de que los cambios son "pequeños", "temporales" o "meramente internos". **Estas justificaciones están explícitamente prohibidas.** Debes adherirte sin excepciones a las siguientes cuatro tablas:
+As an AI agent, you're prone to justifying shortcuts on the pretext that changes are "small", "temporary", or "purely internal". **These justifications are explicitly forbidden.** You must adhere without exception to the following four tables:
 
-### 1. Protección del Grafo
-| Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
+### 1. Graph Protection
+| Agent's usual excuse | Sentina invariant | Mandatory action |
 |---|---|---|
-| *"Es solo un cambio menor de configuración o copy, no requiere tocar `contexto/`"* | Todo cambio de comportamiento o arquitectura altera el estado de verdad del sistema | Crear `contexto/decisiones/dec-<slug>.md` con su `id: dec:<slug>`, declarar `valid_from` y actualizar `relationships` en los nodos afectados. |
-| *"Sobrescribo la decisión anterior directamente porque la nueva la reemplaza"* | Los hechos se superan, no se destruyen (bi-temporalidad) | En el nodo previo: `lifecycle: archived`, `lifecycle_changed`, `valid_until: <fecha>`, `superseded_by: "[[dec-<slug-nuevo>]]"`. En el nuevo: `relationships: [{type: replaces, target: "[[dec-<slug-previo>]]"}]`. |
+| *"It's just a minor config or copy change, it doesn't need to touch `contexto/`"* | Every behavioral or architectural change alters the system's state of truth | Create `contexto/decisiones/dec-<slug>.md` with its `id: dec:<slug>`, declare `valid_from`, and update `relationships` on the affected nodes. |
+| *"I'll overwrite the previous decision directly since the new one replaces it"* | Facts are superseded, not destroyed (bi-temporality) | On the previous node: `lifecycle: archived`, `lifecycle_changed`, `valid_until: <date>`, `superseded_by: "[[dec-<new-slug>]]"`. On the new one: `relationships: [{type: replaces, target: "[[dec-<previous-slug>]]"}]`. |
 
-### 2. Prevención de Bucles (GHL)
-| Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
+### 2. CRM Loop Prevention (GoHighLevel)
+| Agent's usual excuse | Sentina invariant | Mandatory action |
 |---|---|---|
-| *"Solo necesitamos etiquetar el contacto al dispararse la automatización"* | Una etiqueta sin salida documentada es un bucle permanente y atrapa contactos | Si el spec toca `sentina-ghl`, **prohibido generar código, JSON o YAML sin haber documentado la columna 'Quién la quita' en `esquema/etiquetas.md`**. |
-| *"Luego agregamos la condición de salida cuando probemos el flujo en vivo"* | La seguridad de esquemas es previa a la ejecución | Exigir en `/to-spec` y validar en `/implement` que toda etiqueta referenciada tenga sus 5 columnas completas (§6.1). |
+| *"We just need to tag the contact when the automation fires"* | A tag with no documented exit creates a permanent loop and traps contacts | If the spec touches `sentina-ghl`, **it's forbidden to generate code, JSON, or YAML without having documented the "Quién la quita" column in `esquema/etiquetas.md`**. |
+| *"We'll add the exit condition later once we test the flow live"* | Schema safety precedes execution | Require in `/to-spec` and validate in `/implement` that every referenced tag has all 5 columns complete (§6.1). |
 
-### 3. Seguridad, Privacidad y Secretos
-| Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
+### 3. Security, Privacy, and Secrets
+| Agent's usual excuse | Sentina invariant | Mandatory action |
 |---|---|---|
-| *"Pongo la URL completa del webhook en el JSON de prueba para validar que funcione"* | Una URL de webhook entrante **es** una credencial ejecutable (§6.2, §8.3) | **Jamás escribir URLs reales de webhook en archivos JSON o de configuración.** Usar siempre la variable de entorno y registrarla en `webhooks/endpoints.md`. |
-| *"Uso un payload de cliente real como ejemplo porque es más realista"* | Cero datos de cliente en repositorios Git (§8.1) | Anonimizar estrictamente todo nombre, correo, teléfono, identificador y monto antes de guardarlo en el repositorio. |
+| *"I'll put the full webhook URL in the test JSON to validate that it works"* | An inbound webhook URL **is** an executable credential (§6.2, §8.3) | **Never write real webhook URLs into JSON or configuration files.** Always use the environment variable and document it in `webhooks/endpoints.md`. |
+| *"I'll use a real customer payload as an example since it's more realistic"* | Zero customer data in Git repositories (§8.1) | Strictly anonymize every name, email, phone number, identifier, and amount before saving it to the repository. |
 
-### 4. Regla de Evidencia Obligatoria
-| Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
+### 4. Mandatory Evidence Rule
+| Agent's usual excuse | Sentina invariant | Mandatory action |
 |---|---|---|
-| *"El cambio fue una llamada API que dio 200, no hace falta guardar evidencia formal"* | Si no hay evidencia reproducible, el hecho no existe técnicamente | Todo PR que toque o interactúe con sistemas externos (Notion, GHL, webhooks, APIs) **requiere forzosamente poblar `evidencia/<id>/meta.yaml` con el schema completo de §9 (`id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`) y su correspondiente artefacto o log**. |
-| *"La evidencia se puede subir en un commit posterior tras el merge"* | El merge en `main` dispara el workflow automático a Notion | La evidencia debe estar commiteada en la rama antes de abrir el PR para que `.github/workflows/notion-publish-context.yml` la publique al fusionar. |
+| *"The change was an API call that returned 200, no need to save formal evidence"* | If there's no reproducible evidence, the technical fact doesn't exist | Every PR that touches or interacts with external systems (Notion, GHL, webhooks, APIs) **is forcibly required to populate `evidencia/<id>/meta.yaml` with the full §9 schema (`id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`) and its corresponding artifact or log**. |
+| *"The evidence can go up in a later commit after the merge"* | Merging to `main` triggers the automatic workflow to Notion | The evidence must be committed on the branch before opening the Pull Request, so the continuous integration system publishes it on merge. |
+| *"The automated tests already passed, nobody needs to test it by hand"* | An automated test proves what the code believes it does; only a human running the real flow against the live system confirms it does what the business actually asked for | Every PR requires a complete `evidencia/<id>/acceptance-tests.md` (generated by `/acceptance-test`), with "Observations" filled in for every case and no open defects, before opening the Pull Request. |

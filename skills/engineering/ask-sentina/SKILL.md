@@ -1,78 +1,82 @@
 ---
 name: ask-sentina
-description: Enrutador del flujo de desarrollo de Sentina. Guía qué skill utilizar según la fase del trabajo (desde Notion/minutas hasta el PR verificado con evidencia).
+description: Router for the Sentina development flow. Guides which skill to use depending on the phase of work (from Notion/meeting notes to the PR verified with evidence).
 disable-model-invocation: true
 ---
 
 # Ask Sentina
 
-Enrutador oficial sobre las habilidades de desarrollo en el ecosistema Sentina. Te orienta sobre qué habilidad o flujo corresponde a cada momento de tu trabajo.
+The official router over the development skills in the Sentina ecosystem. Orients you on which skill or flow corresponds to each moment of your work.
 
 ---
 
-## 1. El Flujo Principal: Tarea Notion → PR con Evidencia
+## 1. The Main Flow: Notion Task → PR with Evidence
 
-Este es el camino estándar para todo desarrollo en repositorios Sentina (`sentina-notion`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`):
+This is the standard path for all development in Sentina repositories (`sentina-notion`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`):
 
-1. **Inbound desde Notion:**
-   - La tarea nace en Notion (§11.1).
-   - Crea y cambia a la rama de trabajo aislada: `git checkout -b feat/tarea-<id-o-slug>`.
+1. **Inbound from Notion:**
+   - The task originates in Notion (§11.1).
+   - Create and switch to the isolated working branch: `git checkout -b feat/tarea-<id-or-slug>`.
 
-2. **Bloqueo de concurrencia en Notion (§11.1.4):**
-   - Antes de escribir una sola línea de código o spec, actualiza el estado de la tarea en Notion a **"En curso"** y asigna explícitamente el responsable (el usuario o el agente que ejecuta).
-   - Este bloqueo es obligatorio y del agente, no de un workflow de CI: previene que otra sesión o agente tome la misma tarea en paralelo. Si no tienes acceso directo a la API de Notion en esta sesión, pide al usuario que lo confirme antes de continuar.
+2. **Concurrency lock in Notion (§11.1.4):**
+   - Before writing a single line of code or spec, update the task's status in Notion to **"En curso"** and explicitly assign the owner (the user or the agent executing it).
+   - This lock is mandatory and is the agent's job, not a CI workflow's: it prevents another session or agent from picking up the same task in parallel. If you don't have direct access to the Notion API in this session, ask the user to confirm it before continuing.
 
-3. **Auditoría e Interrogatorio con el Vault → `/grill-me`:**
-   - El agente lee el contexto del Vault (`contexto/`, `bases/`, `esquema/`, aristas `relationships`).
-   - Cuestiona activamente los requerimientos, supuestos tácitos, dependencias ocultas y riesgos de seguridad mediante rondas de preguntas con respuestas sugeridas (patrón frontera).
-   - No se escribe código en esta fase.
+3. **Audit and Interrogation with the Vault → `/grill-me`:**
+   - The agent reads the Vault's context (`contexto/`, `bases/`, `esquema/`, `relationships` edges).
+   - Actively questions requirements, tacit assumptions, hidden dependencies, and security risks through rounds of questions with suggested answers (frontier pattern).
+   - No code is written during this phase.
 
-4. **De Minuta / Requerimiento a Spec Atómico → `/to-spec`:**
-   - Formaliza el acuerdo en una especificación técnica.
-   - Declara: archivos a tocar, nodos de grafo a crear o superar con su frontmatter completo (`id: dec:<slug>`, `valid_from`, `replaces`, y el resto de claves requeridas por §3.1), aristas tipadas (`depende_de`), stubs externos si aplica, casos de prueba y las 4 tablas anti-racionalización.
-   - El usuario aprueba el spec antes de proceder.
+4. **From Meeting Note / Requirement to Atomic Spec → `/to-spec`:**
+   - Formalizes the agreement into a technical specification.
+   - Declares: files to touch, graph nodes to create or supersede with their full frontmatter (`id: dec:<slug>`, `valid_from`, `replaces`, and the rest of the keys required by §3.1), typed edges (`depende_de`), external stubs if applicable, test cases, and the 4 anti-rationalization tables.
+   - The user approves the spec before proceeding.
 
-5. **Ejecución Disciplinada y Validada → `/implement`:**
-   - Implementa los cambios en la rama `feat/tarea-*` siguiendo rigurosamente el spec.
-   - Conduce el desarrollo mediante pruebas (`/tdd`).
-   - Ejecuta validaciones locales (`python3 .github/scripts/guardian.py` y tests del proyecto).
-   - Genera evidencia en `evidencia/<id>/meta.yaml` (schema completo §9) y adjunta logs/artefactos reproducibles.
-   - Sincroniza `index.md`, `log.md` y `hot.md` del vault tras escribir o superar nodos (§13.3).
-   - Respeta de forma inflexible las 4 Tablas Anti-Racionalización.
+5. **Disciplined, Validated Execution → `/implement`:**
+   - Implements the changes on the `feat/tarea-*` branch, rigorously following the spec.
+   - Drives development via tests (`/tdd`).
+   - Runs local validations (`python3 .github/scripts/guardian.py` and the project's tests).
+   - Generates evidence in `evidencia/<id>/meta.yaml` (full schema §9) and attaches reproducible logs/artifacts.
+   - Syncs `index.md`, `log.md`, and `hot.md` in the vault after writing or superseding nodes (§13.3), and adds the corresponding entry to `CHANGELOG.md` when the change is visible to the end user.
+   - Adheres inflexibly to the 4 Anti-Rationalization Tables.
 
-6. **Revisión de Calidad y Seguridad → `/code-review` (o `/code-review-and-quality`):**
-   - Audita el diff contra la especificación, estándares de arquitectura, ausencia total de PII de clientes y cumplimiento de esquemas.
+6. **Quality and Security Review → `/code-review` (or `/code-review-and-quality`):**
+   - Audits the diff against the specification, architecture standards, total absence of customer PII, and schema compliance.
 
-7. **Pull Request y Sincronización Outbound:**
-   - Comitea la evidencia en la rama antes de abrir el PR.
-   - Al fusionar a `main`, los workflows de GitHub Actions transicionan la tarea de Notion a "Completada" y publican el contexto y la evidencia (§11.2). Esta parte outbound es responsabilidad del workflow, a diferencia del bloqueo inbound del paso 2, que es responsabilidad del agente.
+7. **Live Functional Verification → `/acceptance-test`:**
+   - Mandatory manual gate: a human runs every case from the spec's Test Cases and Acceptance Criteria section (§5) against the real, running system and records what they observe in `evidencia/<id>/acceptance-tests.md`.
+   - The PR does not open without this document complete and with no unresolved open defects (Mandatory Evidence Table, manifest §14.2).
 
----
-
-## 2. Habilidades de Dominio y Arquitectura
-
-- **Vocabulario y conceptos del negocio:** Usa `/domain-modeling` para afinar términos en `contexto/glosario.md` con identificadores estables `id: glosario:<slug>`.
-- **Diseño de módulos profundos e interfaces:** Usa `/codebase-design` para estructurar módulos con interfaces pequeñas y costuras limpias.
-- **Diseño de APIs y contratos:** Usa `/api-and-interface-design` para endpoints REST, webhooks o contratos de esquemas entre Notion, GHL y módulos cliente.
-- **Iniciativas grandes o difusas (exploración en niebla):** Usa `/wayfinder` para mapear decisiones complejas y registrarlas como nodos bi-temporales en `contexto/decisiones/dec-<slug>.md`.
-- **Prototipos desechables:** Usa `/prototype` para responder preguntas de diseño en ramas `prototype/<nombre>`.
+8. **Pull Request and Outbound Sync:**
+   - Commit the evidence on the branch before opening the PR.
+   - On merging to `main`, the GitHub Actions workflows transition the Notion task to "Completada" and publish the context and evidence (§11.2). This outbound part is the workflow's responsibility, unlike the inbound lock in step 2, which is the agent's responsibility.
 
 ---
 
-## 3. Guardianes de Calidad y Seguridad
+## 2. Domain and Architecture Skills
 
-- **Seguridad y privacidad:** Usa `/security-and-hardening` para auditar código contra vulnerabilidades, proteger secretos y asegurar anonimización de datos (§8.1).
-- **Control de atajos del agente:** Usa `/constraint-driven-development` para establecer barras de calidad inflexibles y evitar que un agente relaje comprobaciones o desactive lints/tests.
-- **Simplificación y deuda técnica:** Usa `/code-simplification` para limpiar complejidad accidental ("claridad sobre astucia") manteniendo las pruebas en verde.
-- **Deprecaciones y migraciones:** Usa `/deprecation-and-migration` para retirar esquemas, endpoints o contratos viejos aplicando el patrón expand/contract alineado con la bi-temporalidad (§3.2, §10).
-- **Dudas en decisiones críticas:** Usa `/doubt-driven-development` para someter cambios de alto impacto a un análisis adversarial de riesgos antes de implementarlos.
+- **Business vocabulary and concepts:** Use `/domain-modeling` to sharpen terms in `contexto/glosario.md` with stable identifiers `id: glosario:<slug>`.
+- **Deep module and interface design:** Use `/codebase-design` to structure modules with small interfaces and clean seams.
+- **API and contract design:** Use `/api-and-interface-design` for REST endpoints, webhooks, or schema contracts between Notion, GHL, and client modules.
+- **Large or foggy initiatives (fog exploration):** Use `/wayfinder` to map complex decisions and record them as bi-temporal nodes in `contexto/decisiones/dec-<slug>.md`.
+- **Throwaway prototypes:** Use `/prototype` to answer design questions on `prototype/<name>` branches.
 
 ---
 
-## 4. Diagnóstico y Soporte
+## 3. Quality and Security Guardians
 
-- **Bugs difíciles o regresiones:** Usa `/diagnosing-bugs` para aislar un bucle de retroalimentación estrecho antes de teorizar soluciones.
-- **Conflictos de Git:** Usa `/resolving-merge-conflicts` para resolver hunks de conflicto rastreando la intención en las fuentes primarias.
-- **Credenciales y acciones humanas en dashboards:** Usa `/wizard` para generar scripts interactivos en tareas que requieren intervención humana en portales o variables de entorno.
-- **Traspaso entre sesiones o agentes:** Usa `/handoff` para sintetizar el estado de trabajo en un documento portátil antes de reiniciar o cambiar de contexto.
-- **Redacción y estructura de contenido:** Usa `/writing-beats`, `/writing-fragments` y `/writing-shape` para articular síntesis, guías y documentos extensos.
+- **Security and privacy:** Use `/security-and-hardening` to audit code against vulnerabilities, protect secrets, and ensure data anonymization (§8.1).
+- **Agent shortcut control:** Use `/constraint-driven-development` to set inflexible quality bars and stop an agent from relaxing checks or disabling lints/tests.
+- **Simplification and technical debt:** Use `/code-simplification` to clean up accidental complexity ("clarity over cleverness") while keeping tests green.
+- **Deprecations and migrations:** Use `/deprecation-and-migration` to retire old schemas, endpoints, or contracts applying the expand/contract pattern aligned with bi-temporality (§3.2, §10).
+- **Doubts on critical decisions:** Use `/doubt-driven-development` to subject high-impact changes to adversarial risk analysis before implementing them.
+
+---
+
+## 4. Diagnosis and Support
+
+- **Hard bugs or regressions:** Use `/diagnosing-bugs` to isolate a tight feedback loop before theorizing solutions.
+- **Git conflicts:** Use `/resolving-merge-conflicts` to resolve conflict hunks by tracing intent back to primary sources.
+- **Credentials and human actions on dashboards:** Use `/wizard` to generate interactive scripts for tasks that require human intervention on portals or environment variables.
+- **Handoff between sessions or agents:** Use `/handoff` to synthesize work state into a portable document before restarting or switching context.
+- **Writing and structuring content:** Use `/writing-beats`, `/writing-fragments`, and `/writing-shape` to articulate syntheses, guides, and long-form documents.

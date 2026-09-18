@@ -18,14 +18,14 @@ En Sentina el desarrollo asistido por IA se rige por tres pilares fundamentales:
 
 ## El Ciclo de Desarrollo Sentina
 
-Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de siete etapas:
+Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de ocho etapas:
 
 ```
-  NOTION          LOCK          GRILL          SPEC           BUILD          REVIEW          SYNC
- ┌──────┐      ┌────────┐    ┌────────┐     ┌────────┐     ┌─────────┐    ┌─────────┐     ┌────────┐
- │Task /│ ───▶ │Bloqueo │ ─▶ │$grill- │ ──▶ │$to-spec│ ──▶ │$implement│ ─▶ │ $code-  │ ──▶ │ PR +   │
- │Minuta│      │Notion  │    │   me   │     │ (Spec) │     │ (feat/*)│    │ review  │     │ Evid.  │
- └──────┘      └────────┘    └────────┘     └────────┘     └─────────┘    └─────────┘     └────────┘
+  NOTION         LOCK         GRILL          SPEC           BUILD          REVIEW          VERIFY           SYNC
+ ┌──────┐     ┌───────┐     ┌───────┐     ┌────────┐     ┌──────────┐     ┌──────┐     ┌────────────┐     ┌─────┐
+ │Task /│ ──▶ │Bloqueo│ ──▶ │$grill-│ ──▶ │$to-spec│ ──▶ │$implement│ ──▶ │$code-│ ──▶ │$acceptance-│ ──▶ │ PR +│
+ │Minuta│     │ Notion│     │   me  │     │ (Spec) │     │ (feat/*) │     │review│     │    test    │     │Evid.│
+ └──────┘     └───────┘     └───────┘     └────────┘     └──────────┘     └──────┘     └────────────┘     └─────┘
 ```
 
 ### 1. Inbound desde Notion y rama aislada
@@ -58,12 +58,16 @@ El agente ejecuta el trabajo en la rama aislada siguiendo la especificación apr
 - Conduce el desarrollo mediante pruebas ([`tdd`](./skills/engineering/tdd/SKILL.md)).
 - Ejecuta las validaciones locales del proyecto y el guardián del repositorio (`python3 .github/scripts/guardian.py`).
 - Genera obligatoriamente el registro de evidencia en `evidencia/<id>/meta.yaml` acompañado de su log o artefacto técnico reproducible (§9).
-- Actualiza la contabilidad del vault (`index.md`, `log.md` y `hot.md`, §13.3) tras crear o superar nodos del grafo.
+- Actualiza la contabilidad del vault (`index.md`, `log.md` y `hot.md`, §13.3) tras crear o superar nodos del grafo, y añade la entrada correspondiente a `CHANGELOG.md` cuando el cambio sea visible para el usuario final.
 
 ### 6. Revisión Multi-Eje previa al Pull Request (`$code-review` en Codex)
 Audita el diff completo contra la especificación técnica, los estándares de código, la ausencia total de datos personales de clientes (cero PII) y la ausencia de URLs reales de webhooks o secretos no obvios.
 
-### 7. Pull Request y Sincronización Outbound hacia Notion
+### 7. Verificación Funcional en Vivo (`$acceptance-test` en Codex)
+Puerta manual y obligatoria antes del PR: un humano ejecuta cada caso de la sección "Casos de Prueba y Criterios de Aceptación" del spec contra el sistema real en funcionamiento (no simulado), usando los prompts o entradas literales que la habilidad genera en `evidencia/<id>/acceptance-tests.md`, y registra lo observado.
+- Sin este documento completo y sin defectos abiertos, no se abre el Pull Request (§14.2, tabla de evidencia).
+
+### 8. Pull Request y Sincronización Outbound hacia Notion
 - La evidencia se incluye en el commit dentro de la rama antes de abrir el Pull Request.
 - Al fusionar la rama en `main`, los flujos automatizados de GitHub Actions actualizan la tarea en Notion a "Completada" y publican el contexto y la evidencia técnica (§11.2).
 
@@ -96,6 +100,7 @@ Inyectadas en las habilidades centrales para bloquear atajos cognitivos del mode
 |---|---|---|
 | *"El cambio fue una llamada API que dio 200, no hace falta guardar evidencia formal"* | Si no hay evidencia reproducible, el hecho técnico no existe | Todo Pull Request que toque sistemas externos (Notion, GHL, webhooks, APIs) requiere forzosamente poblar `evidencia/<id>/meta.yaml` con el esquema completo de §9 y su log o artefacto correspondiente. |
 | *"La evidencia se puede subir en un commit posterior tras el merge"* | El merge en `main` dispara el flujo automático hacia Notion | La evidencia debe quedar guardada en la rama antes de abrir el Pull Request para que el sistema de integración continua la publique al fusionar. |
+| *"Los tests automatizados ya pasaron, no hace falta que alguien lo pruebe a mano"* | Un test automatizado prueba lo que el código cree que hace; solo un humano ejecutando el flujo real contra el sistema en vivo confirma que hace lo que el negocio pidió | Todo PR requiere `evidencia/<id>/acceptance-tests.md` completo (generado por `/acceptance-test`), con la sección "Observations" llena en cada caso y sin defectos abiertos, antes de abrir el Pull Request. |
 
 ---
 
@@ -156,6 +161,7 @@ Habilidades de proceso guiado, ejecutadas por el desarrollador mediante comando:
 - **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: Enrutador y orquestador del flujo de trabajo de desarrollo en repositorios Sentina.
 - **[to-spec](./skills/engineering/to-spec/SKILL.md)**: Transforma acuerdos o minutas de reunión en especificaciones técnicas atómicas con frontmatter de grafo completo, aristas y validación de invariantes.
 - **[implement](./skills/engineering/implement/SKILL.md)**: Conduce la implementación técnica en la rama `feat/tarea-*` con pruebas locales, evidencia obligatoria y apego al esquema del vault.
+- **[acceptance-test](./skills/engineering/acceptance-test/SKILL.md)**: Genera el documento de pruebas de aceptación a partir de los criterios del spec y bloquea el PR hasta que un humano lo complete contra el sistema real.
 - **[to-tickets](./skills/engineering/to-tickets/SKILL.md)**: Divide un plan grande en rebanadas verticales (*tracer bullets*) independientes con orden de dependencias claro.
 - **[grill-with-docs](./skills/engineering/grill-with-docs/SKILL.md)**: Sesión de interrogatorio que aterriza y sincroniza el modelo de dominio en repositorios con documentación formal.
 - **[triage](./skills/engineering/triage/SKILL.md)**: Clasificación metódica y máquina de estados para el procesamiento de incidencias técnicas.
@@ -238,7 +244,11 @@ Habilidades técnicas reactivas que el agente invoca de manera autónoma o que p
    ```text
    $code-review
    ```
-9. Abre el Pull Request. Al fusionarse con `main`, la tarea se actualizará automáticamente en Notion.
+9. Ejecuta la verificación funcional en vivo: responde a `$acceptance-test`, corre cada caso contra el sistema real y completa las observaciones.
+   ```text
+   $acceptance-test
+   ```
+10. Abre el Pull Request. Al fusionarse con `main`, la tarea se actualizará automáticamente en Notion.
 
 ### Escenario 2: Resolver un bug complejo en producción
 

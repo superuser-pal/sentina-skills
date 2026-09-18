@@ -21,6 +21,7 @@
     "productivity"
   ],
   "skills": [
+    "./skills/engineering/acceptance-test",
     "./skills/engineering/api-and-interface-design",
     "./skills/engineering/ask-sentina",
     "./skills/engineering/code-review",

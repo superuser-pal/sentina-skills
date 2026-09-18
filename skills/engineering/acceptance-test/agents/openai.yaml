@@ -1,0 +1,5 @@
+interface:
+  display_name: "Acceptance Test"
+  short_description: "Run the spec's acceptance tests by hand against the live system"
+policy:
+  allow_implicit_invocation: false
