@@ -80,3 +80,9 @@ This is the standard path for all development in Sentina repositories (`sentina-
 - **Credentials and human actions on dashboards:** Use `/wizard` to generate interactive scripts for tasks that require human intervention on portals or environment variables.
 - **Handoff between sessions or agents:** Use `/handoff` to synthesize work state into a portable document before restarting or switching context.
 - **Writing and structuring content:** Use `/writing-beats`, `/writing-fragments`, and `/writing-shape` to articulate syntheses, guides, and long-form documents.
+
+---
+
+## Precondition
+
+**`/setup-sentina`**: run once on a freshly cloned Sentina repo, before step 1 of the main flow. It confirms the repo's profile, runs `scaffold.py`, and records the Notion connection in `.sentina/manifiesto.yaml`, the file every skill above reads. If `.sentina/manifiesto.yaml` already exists, the repo is already set up and you can skip straight to step 1.

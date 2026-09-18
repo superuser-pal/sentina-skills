@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Sentina"
+  short_description: "Scaffold a fresh Sentina repo clone and record its Notion connection"
+policy:
+  allow_implicit_invocation: false

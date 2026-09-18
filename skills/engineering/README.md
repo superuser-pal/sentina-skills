@@ -6,6 +6,7 @@ Skills for daily engineering work in Sentina repositories.
 
 Reachable only when explicitly invoked by the developer (`disable-model-invocation: true`).
 
+- **[setup-sentina](./setup-sentina/SKILL.md)**: Scaffolds a fresh Sentina repo clone: confirms its profile, runs `scaffold.py`, and records the Notion connection in `.sentina/manifiesto.yaml`. Run once before the first engineering flow.
 - **[ask-sentina](./ask-sentina/SKILL.md)**: Router for the Sentina development workflow: guides which skill to use from Notion task to PR with evidence.
 - **[to-spec](./to-spec/SKILL.md)**: Turn a Notion AI minute, conversation, or task into an atomic, formal technical specification with graph IDs and anti-rationalization validation.
 - **[implement](./implement/SKILL.md)**: Disciplined execution on branch `feat/tarea-*` following a spec, with local validation, required evidence in `evidencia/<id>/meta.yaml`, and strict anti-rationalization tables.

@@ -18,6 +18,8 @@ En Sentina el desarrollo asistido por IA se rige por tres pilares fundamentales:
 
 ## El Ciclo de Desarrollo Sentina
 
+**Antes de empezar en un repo Sentina recién clonado:** ejecuta `$setup-sentina` una sola vez para confirmar el perfil del repositorio, correr `scaffold.py` y registrar la conexión con Notion en `.sentina/manifiesto.yaml`. Si el repo ya está perfilado (el archivo ya existe), el resto de las habilidades de este ciclo asumen esa configuración y no necesitas repetirlo.
+
 Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de ocho etapas:
 
 ```
@@ -158,6 +160,7 @@ Las habilidades se clasifican según su forma de ejecución:
 
 Habilidades de proceso guiado, ejecutadas por el desarrollador mediante comando:
 
+- **[setup-sentina](./skills/engineering/setup-sentina/SKILL.md)**: Scaffolding de un repo Sentina recién clonado: confirma su perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. Ejecútalo una sola vez antes del primer flujo de ingeniería.
 - **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: Enrutador y orquestador del flujo de trabajo de desarrollo en repositorios Sentina.
 - **[to-spec](./skills/engineering/to-spec/SKILL.md)**: Transforma acuerdos o minutas de reunión en especificaciones técnicas atómicas con frontmatter de grafo completo, aristas y validación de invariantes.
 - **[implement](./skills/engineering/implement/SKILL.md)**: Conduce la implementación técnica en la rama `feat/tarea-*` con pruebas locales, evidencia obligatoria y apego al esquema del vault.
