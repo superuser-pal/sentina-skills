@@ -1,0 +1,5 @@
+interface:
+  display_name: "The Jury"
+  short_description: "Convene a multi-agent panel to reach a verdict"
+policy:
+  allow_implicit_invocation: false

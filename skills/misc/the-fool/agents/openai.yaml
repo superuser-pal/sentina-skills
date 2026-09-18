@@ -1,0 +1,5 @@
+interface:
+  display_name: "The Fool"
+  short_description: "Play devil's advocate against a plan or decision"
+policy:
+  allow_implicit_invocation: false

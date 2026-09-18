@@ -1,0 +1,5 @@
+interface:
+  display_name: "Playwright Browser Automation"
+  short_description: "Write and run custom browser automation with Playwright"
+policy:
+  allow_implicit_invocation: false

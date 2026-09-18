@@ -1,0 +1,5 @@
+interface:
+  display_name: "Skill Architect"
+  short_description: "Build a new skill via guided discovery"
+policy:
+  allow_implicit_invocation: false

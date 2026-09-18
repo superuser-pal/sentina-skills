@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Replaced `excalidraw`'s mechanism: it no longer drives a live canvas via `mcp-excalidraw-server` (MCP/CLI/REST), and instead generates `.excalidraw` JSON files directly from a diagram-type decision matrix and eight templates, adapted from `tech-leads-club/agent-skills`' `excalidraw-studio` (CC-BY-4.0, Felipe Rodrigues). Set `disable-model-invocation: true` so it only fires when the user names it, keeping it from competing with `diagram-design`'s broader auto-invoked triggers for generic "draw me a diagram" requests.
+- Added five skills from `tech-leads-club/agent-skills` to `misc/`, all `disable-model-invocation: true` since each overlaps with an existing auto-invoked skill's territory: `skill-architect` (guided skill-building conversation, alongside `writing-for-agents`), `subagent-creator` (agent-agnostic subagent/persona definitions, no existing equivalent), `the-fool` (single-agent devil's-advocate critique, alongside `doubt-driven-development` and `grilling`), `the-jury` (multi-agent panel verdict, alongside `doubt-driven-development`), and `playwright-skill` (general-purpose Playwright browser automation, the first skill in this repo with a real npm/browser-binary install step).
 - Document Codex skill invocation with `$skill-name` and `/skills`, while preserving `/skill-name` for Claude Code.
 - Promote `scripts/link-skills.sh` to a supported installer that refuses to replace user-owned files, directories, or links.
 - Install only promoted `engineering/` and `productivity/` skills by default. Add `--include-in-progress` for beta skills and remove repository-owned beta links when returning to the stable default.

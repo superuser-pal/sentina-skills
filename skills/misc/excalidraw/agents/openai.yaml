@@ -1,3 +1,5 @@
 interface:
   display_name: "Excalidraw"
-  short_description: "Create and refine diagrams on a live Excalidraw canvas"
+  short_description: "Generate an editable .excalidraw diagram file"
+policy:
+  allow_implicit_invocation: false

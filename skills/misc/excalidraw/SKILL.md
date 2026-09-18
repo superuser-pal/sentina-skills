@@ -1,276 +1,280 @@
 ---
 name: excalidraw
-description: Excalidraw canvas toolkit for creating, editing, and refining diagrams on a live canvas. Use when an agent needs to (1) draw or lay out diagrams, (2) iteratively refine them by describing the scene and screenshotting its own work, (3) export/import .excalidraw files or PNG/SVG images, (4) save/restore canvas snapshots, (5) convert Mermaid to Excalidraw, or (6) perform element-level CRUD, alignment, distribution, grouping, duplication, and locking. Primary interface is the bundled CLI (npx -y mcp-excalidraw-server <command>) which auto-starts the canvas server; MCP tools and a REST API are equivalent alternatives.
+description: Generate Excalidraw diagrams from a natural-language description and save them as .excalidraw files openable in Excalidraw, VS Code, or Obsidian.
+disable-model-invocation: true
+license: CC-BY-4.0
+argument-hint: "what to draw, e.g. a flowchart, an ER diagram, or a system architecture"
+metadata:
+  author: "Felipe Rodrigues (github.com/felipfr), adapted for Sentina from tech-leads-club/agent-skills"
+  version: "1.0.1"
 ---
 
-# Excalidraw Skill
+# Excalidraw
 
-## Step 0: Pick an Interface
+Generate Excalidraw-format diagrams from natural language descriptions. Outputs a `.excalidraw` JSON file that opens directly in Excalidraw (web, VS Code extension, or Obsidian plugin), no live canvas or MCP server required.
 
-Three interfaces drive the same live canvas. Pick the first one that applies:
+This skill is user-invoked on purpose: the repo also has `diagram-design` for branded HTML/SVG/PNG diagrams, and the two would otherwise compete for the same "draw me a diagram" requests. Only reach for this skill when the user names it directly (e.g. "use excalidraw", "make an Excalidraw file for this") or explicitly asks for an editable `.excalidraw` output.
 
-1. **MCP tools** — if `excalidraw/*` tools (e.g. `batch_create_elements`) are in your tool list, prefer them: results land directly in your context, and screenshots come back as images without touching disk.
-2. **CLI** (default when no MCP tools are present):
-   ```bash
-   npx -y mcp-excalidraw-server <command>
-   ```
-   No setup needed — any canvas-touching command **auto-starts the canvas server** on `http://127.0.0.1:3000` (first `npx` run downloads the package). If the CLI is installed globally (`npm i -g mcp-excalidraw-server`), the shorter alias `excalidraw-canvas <command>` works too.
-3. **REST API** (last resort, e.g. from application code): HTTP endpoints on `http://127.0.0.1:3000` — see `references/cheatsheet.md` for payloads. The server must already be running.
+## Workflow
 
-The canvas URL comes from `EXPRESS_SERVER_URL` (default `http://127.0.0.1:3000`). Remind the user to open that URL in a browser — screenshots, image export, mermaid conversion, and viewport control need an open tab (CLI exits with code 4 when it's missing).
-
-### CLI Quick Reference
-
-Results are JSON on stdout — except `describe` (plain text) and raw-content output when `--out` is omitted (`export` scene JSON, `screenshot --format svg`). Diagnostics on stderr. Exit codes: 0 ok, 1 error, 2 usage, 3 canvas unreachable, 4 browser tab required.
-
-| Task | Command |
-|------|---------|
-| Start / stop / inspect server | `start`, `stop`, `status` |
-| Create elements (batch) | `add elements.json` or `echo '[...]' \| add` or `add --one '{...}'` |
-| Multi-op patch in one call | `apply patch.json` — `{"create":[...],"update":[{"id":"a","set":{...}}],"delete":[...]}` |
-| Read one / query many | `get <id>`, `query [--type t] [--bbox x0,y0,x1,y1] [--filter k=v] [--filter-json '{...}']` |
-| Update / delete | `update <id> --set '{...}'`, `delete <id> [...]` |
-| Understand the scene | `describe` (plain-text summary: ids, positions, labels, connections) |
-| See the scene | `screenshot [--out f.png]` (PNG without `--out` → temp file path in JSON; SVG without `--out` → raw SVG) |
-| Layout operations | `arrange align\|distribute\|group\|ungroup\|lock\|unlock\|duplicate --ids a,b,c [--to left\|horizontal\|...]` |
-| Scene files | `export [--out scene.excalidraw]`, `import [scene.excalidraw|-] [--replace]` — a `.excalidraw.md` out path writes Obsidian's format (see File I/O) |
-| Mermaid → canvas | `mermaid [diagram.mmd|-]` (or stdin) |
-| Snapshots | `snapshot save\|list\|restore <name>` |
-| Share link | `share` (encrypted upload → excalidraw.com URL) |
-| Wipe canvas | `clear --yes` |
-| Install / upgrade this skill | `install-skill --dir <skills-root>` (agent chooses project/global root) |
-
-### Element Format (CLI and MCP)
-
-The CLI and MCP tools accept the same agent-friendly format and normalize it automatically:
-
-- **Labels**: put `"text": "My Label"` on any shape — converted to Excalidraw's bound-label format for you.
-- **Arrow binding**: `"startElementId": "a"` / `"endElementId": "b"` — arrows auto-route to element edges.
-- **fontFamily**: pass a string name (`"helvetica"`, `"cascadia"`, `"excalifont"`, ...) or string number `"1"`–`"8"`.
-- **points**: both `[[x,y], ...]` tuples and `[{"x":..,"y":..}]` objects are accepted.
-- **Patch updates**: in `apply`, update entries can use either direct fields (`{"id":"a","x":120}`) or a `set` object (`{"id":"a","set":{"x":120}}`). Do not mix both forms in one update entry.
-
-**Raw REST is stricter**: labels must be `"label": {"text": "..."}`, bindings must be `"start": {"id": "..."}` / `"end": {"id": "..."}`. Only worry about this when POSTing to the API directly.
-
----
-
-## Coordinate System
-
-The canvas uses a 2D coordinate grid: **(0, 0) is the origin**, **x increases rightward**, **y increases downward**. Plan your layout before writing any JSON.
-
-**General spacing guidelines:**
-- Vertical spacing between tiers: 80–120px (enough that arrows don't crowd labels)
-- Horizontal spacing between siblings: 40–60px minimum; give labeled arrows 120px+
-- Shape width: `max(160, labelCharCount * 12)` to keep the label on one line
-- Shape height: 60px single-line, 80px two-line labels
-- Background/zone padding: 50px on all sides around contained elements
-
-**Styling for a professional look:**
-- `"fillStyle": "solid"` on shapes gives crisp flat fills — the default is a sketchy hachure pattern
-- Pair pastel `backgroundColor` fills with their darker `strokeColor` (palette in the cheatsheet)
-- `"strokeStyle": "dashed"` on zone borders and async arrows reads as "boundary / background"
-
----
-
-## Layout Anti-Patterns (Critical for Complex Diagrams)
-
-These are the most common mistakes that produce unreadable diagrams. Avoid all of them.
-
-### 1. Do NOT use `label.text` (or `text`) on large background zone rectangles
-
-When you put a label on a background rectangle, Excalidraw creates a bound text element centered in the middle of that shape — right where your service boxes will be placed. The text overlaps everything inside the zone and cannot be repositioned.
-
-**Wrong:**
-```json
-{"id": "vpc-zone", "type": "rectangle", "x": 50, "y": 50, "width": 800, "height": 400, "text": "VPC (10.0.0.0/16)"}
+```
+UNDERSTAND -> CHOOSE TYPE -> EXTRACT -> GENERATE -> SAVE
 ```
 
-**Right — use a free-standing text element anchored at the top of the zone:**
-```json
-{"id": "vpc-zone", "type": "rectangle", "x": 50, "y": 50, "width": 800, "height": 400, "backgroundColor": "#e3f2fd"},
-{"id": "vpc-label", "type": "text", "x": 70, "y": 60, "width": 300, "height": 30, "text": "VPC (10.0.0.0/16)", "fontSize": 18}
-```
+### Step 1: Understand the request
 
-The free-standing text element sits at the top corner of the zone and doesn't interfere with elements placed inside.
+Analyze the user's description to determine:
 
-### 2. Avoid cross-zone arrows in complex diagrams
+1. **Diagram type**: use the decision matrix below.
+2. **Key elements**: entities, steps, concepts, actors.
+3. **Relationships**: flow direction, connections, hierarchy.
+4. **Complexity**: number of elements (target under 20 for clarity).
 
-An arrow from an element in one layout zone to an element in a distant zone will draw a long diagonal line crossing through everything in between. In a multi-zone infra diagram this produces an unreadable tangle of spaghetti.
+### Step 2: Choose the diagram type and visual mode
 
-**Design rule:** Keep arrows within the same zone or tier. To show cross-zone relationships, use annotation text or separate the zones so their edges are adjacent (no elements between them), and route the arrow along the edge.
+**Diagram type:**
 
-If you must connect across zones, use an elbowed arrow that travels along the perimeter — never through the middle of another zone.
+| User intent                | Diagram type          | Keywords                                       |
+| --------------------------- | ---------------------- | ----------------------------------------------- |
+| Process flow, steps         | **Flowchart**           | "workflow", "process", "steps"                  |
+| Connections, dependencies   | **Relationship**        | "relationship", "connections", "dependencies"   |
+| Concept hierarchy           | **Mind map**            | "mind map", "concepts", "breakdown"             |
+| System design               | **Architecture**        | "architecture", "system", "components"          |
+| Data movement               | **Data flow (DFD)**     | "data flow", "data processing"                  |
+| Cross-functional processes  | **Swimlane**            | "business process", "swimlane", "actors"        |
+| Object-oriented design      | **Class diagram**       | "class", "inheritance", "OOP"                   |
+| Interaction sequences       | **Sequence diagram**    | "sequence", "interaction", "messages"           |
+| Database design             | **ER diagram**          | "database", "entity", "data model"              |
 
-### 3. Use arrow labels sparingly
+**Visual mode**: decide upfront and apply it consistently to every element.
 
-Arrow labels are placed at the midpoint of the arrow. On short arrows, they overlap the shapes at both ends. On crowded diagrams, they collide with nearby elements.
+| Mode       | `roughness`             | `fontFamily` | When to use                                                |
+| ---------- | ------------------------ | ------------ | ----------------------------------------------------------- |
+| **Sketch** | `1`                      | `5`          | Default: informal, approachable, Excalidraw-native.          |
+| **Clean**  | `0`                      | `2`          | Executive presentations, formal specs.                       |
+| **Mixed**  | zones `0`, shapes `1`    | `5`          | Architecture diagrams (structural zones + sketchy shapes).   |
 
-- Only add an arrow label when the relationship name is genuinely essential (e.g., protocol, port number, data direction).
-- If you're adding a label to every arrow, reconsider — it usually adds visual noise, not clarity.
-- Keep arrow labels to ≤ 12 characters. Prefer omitting them entirely on dense diagrams.
+### Step 3: Extract structured information
 
----
+Extract the key components for the chosen diagram type:
 
-## Quality: Why It Matters (and How to Check)
+- **Nodes/entities**: what are the boxes/shapes?
+- **Connections**: what connects to what, and with what label?
+- **Hierarchy**: what contains what, what comes before what?
+- **Decision points**: where does the flow branch?
 
-Excalidraw diagrams are visual communication. If text is cut off, elements overlap, or arrows cross through unrelated shapes, the diagram becomes confusing and unprofessional — it defeats the whole purpose of drawing it. So after every batch of elements, verify before adding more.
+For detailed extraction guidelines per diagram type, read [`references/element-types.md`](references/element-types.md).
 
-### Quality Checklist
+### Step 4: Generate the Excalidraw JSON
 
-After each `add` / `apply` / `batch_create_elements`, take a screenshot and check:
+**Critical: read [`references/excalidraw-schema.md`](references/excalidraw-schema.md) before generating your first diagram.** It has the correct element format, the text-container model, and the binding system.
 
-1. **Text truncation** — Is all label text fully visible? Truncated text means the shape is too small. Increase `width` and/or `height`.
-2. **Overlap** — Do any shapes share the same space? Background zones must fully contain children with padding.
-3. **Arrow crossing** — Do arrows cut through unrelated elements? If yes, route them around using curved or elbowed arrows (see Arrow Routing below).
-4. **Arrow-label overlap** — Arrow labels sit at the midpoint. If they overlap a shape, shorten the label or adjust the arrow path.
-5. **Spacing** — At least 40px gap between elements. Cramped layouts are hard to read.
-6. **Readability** — Font size ≥ 16 for body text, ≥ 20 for titles.
-7. **Zone label placement** — If you used `text`/`label.text` on a background zone rectangle, the zone label will be centered in the middle of the zone, overlapping everything inside. Fix: delete the bound text element and add a free-standing text element at the top of the zone instead (see Layout Anti-Patterns above).
+Key rules for generation:
 
-If you find any issue: **stop, fix it, re-screenshot, then continue.** Say "I see [issue], fixing it" rather than glossing over problems. Only proceed once all checks pass.
+1. **Text inside shapes**: use `boundElements` on the shape and a separate text element with `containerId`. Never use a `label` shorthand:
 
----
-
-## Workflow: Drawing a New Diagram
-
-### Mermaid vs. Direct Creation — Which to Use?
-
-**Use `mermaid` / `create_from_mermaid`** when: the user already has a Mermaid diagram, or the structure maps cleanly to a flowchart/sequence/ER diagram with standard Mermaid syntax. It's fast and handles conversion automatically, though you get less control over exact layout.
-
-**Create elements directly** when: you need precise layout control, the diagram type doesn't map to Mermaid well (e.g., custom architecture, annotated cloud diagrams), or you want elements positioned in a specific coordinate grid.
-
-### Steps (CLI shown; MCP tools are 1:1 — see cheatsheet)
-
-1. Plan your coordinate grid — map out tiers and x-positions before writing JSON. (MCP mode: call `read_diagram_guide` for colors/sizing; the same guidance lives in `references/cheatsheet.md`.)
-2. Optional fresh start: `npx -y mcp-excalidraw-server clear --yes`
-3. Create shapes and arrows in one call. Custom `id` fields (e.g. `"id": "auth-svc"`) make later updates easy:
-   ```bash
-   npx -y mcp-excalidraw-server add - <<'EOF'
+   ```json
    [
-     {"id": "lb", "type": "rectangle", "x": 300, "y": 50, "width": 180, "height": 60, "text": "Load Balancer"},
-     {"id": "svc-a", "type": "rectangle", "x": 100, "y": 200, "width": 160, "height": 60, "text": "Web Server 1"},
-     {"id": "svc-b", "type": "rectangle", "x": 450, "y": 200, "width": 160, "height": 60, "text": "Web Server 2"},
-     {"id": "db", "type": "rectangle", "x": 275, "y": 350, "width": 210, "height": 60, "text": "PostgreSQL"},
-     {"type": "arrow", "x": 0, "y": 0, "startElementId": "lb", "endElementId": "svc-a"},
-     {"type": "arrow", "x": 0, "y": 0, "startElementId": "lb", "endElementId": "svc-b"},
-     {"type": "arrow", "x": 0, "y": 0, "startElementId": "svc-a", "endElementId": "db"},
-     {"type": "arrow", "x": 0, "y": 0, "startElementId": "svc-b", "endElementId": "db"}
+     {
+       "id": "step-1",
+       "type": "rectangle",
+       "x": 100, "y": 100, "width": 200, "height": 80,
+       "boundElements": [{ "type": "text", "id": "text-step-1" }]
+     },
+     {
+       "id": "text-step-1",
+       "type": "text",
+       "x": 130, "y": 128, "width": 140, "height": 24,
+       "text": "My Step", "originalText": "My Step",
+       "fontSize": 20, "fontFamily": 5,
+       "textAlign": "center", "verticalAlign": "middle",
+       "containerId": "step-1", "lineHeight": 1.25, "roundness": null
+     }
    ]
-   EOF
    ```
-   (The `-` positional is optional — with no file argument, `add` reads stdin.)
-4. Set shape widths using `max(160, labelLength * 12)`.
-5. `screenshot` → view the file → run the Quality Checklist → fix issues before the next batch.
 
----
+2. **Arrow labels**: also use `boundElements` plus a separate text element with `containerId`. Never use a `label` shorthand on arrows:
 
-## Arrow Routing — Avoid Overlaps
+   ```json
+   [
+     {
+       "id": "arrow-1",
+       "type": "arrow",
+       "x": 100, "y": 150,
+       "points": [[0, 0], [200, 0]],
+       "boundElements": [{ "type": "text", "id": "text-arrow-1" }]
+     },
+     {
+       "id": "text-arrow-1",
+       "type": "text",
+       "x": 160, "y": 132, "width": 80, "height": 18,
+       "text": "sends data", "originalText": "sends data",
+       "fontSize": 14, "fontFamily": 5,
+       "textAlign": "center", "verticalAlign": "middle",
+       "containerId": "arrow-1", "lineHeight": 1.25, "roundness": null
+     }
+   ]
+   ```
 
-Straight arrows can cross through elements in complex diagrams. Use curved or elbowed arrows when needed:
+3. **Arrow bindings**: use `startBinding`/`endBinding`, not `start`/`end`. Connected shapes must list the arrow in their `boundElements`:
 
-**Curved arrows** (smooth arc over obstacles):
-```json
-{
-  "type": "arrow", "x": 100, "y": 100,
-  "points": [[0, 0], [50, -40], [200, 0]],
-  "roundness": {"type": 2}
-}
-```
-The intermediate waypoint `[50, -40]` lifts the arrow upward. `roundness: {type: 2}` makes it smooth.
+   ```json
+   {
+     "id": "shape-1",
+     "boundElements": [
+       { "type": "text", "id": "text-shape-1" },
+       { "type": "arrow", "id": "arrow-1" }
+     ]
+   }
+   ```
+   ```json
+   {
+     "id": "arrow-1",
+     "type": "arrow",
+     "startBinding": { "elementId": "shape-1", "focus": 0, "gap": 1 },
+     "endBinding": { "elementId": "shape-2", "focus": 0, "gap": 1 }
+   }
+   ```
 
-**Elbowed arrows** (right-angle / L-shaped routing):
-```json
-{
-  "type": "arrow", "x": 100, "y": 100,
-  "points": [[0, 0], [0, -50], [200, -50], [200, 0]],
-  "elbowed": true
-}
-```
+4. **Element order for z-index**: declare shapes first, arrows second, text elements last. This guarantees text renders on top and is never obscured by arrows or other shapes.
 
-**When to use which:**
-- Fan-out (one source → many targets): curved arrows with waypoints spread to avoid overlapping
-- Cross-lane (connecting to side panels): elbowed arrows that go up, then across, then down
-- Long horizontal connections: curved arrows with a slight vertical offset
+5. **Positioning**: use grid-aligned coordinates (multiples of 20px when `gridSize: 20`). Leave a 200-300px horizontal gap and a 100-150px vertical gap between elements.
 
-**Rule:** If an arrow would pass through an unrelated shape, add a waypoint to route around it.
+6. **Unique IDs**: every element needs a unique `id`. Use descriptive IDs like `"step-1"`, `"decision-valid"`, `"arrow-1-to-2"`, `"text-step-1"`.
 
----
+7. **Colors**: use a consistent palette.
 
-## Workflow: Iterative Refinement
+   | Role                | Color       | Hex       |
+   | -------------------- | ----------- | --------- |
+   | Primary entities     | Light blue  | `#a5d8ff` |
+   | Process steps        | Light green | `#b2f2bb` |
+   | Important/central    | Yellow      | `#ffd43b` |
+   | Warnings/errors      | Light red   | `#ffc9c9` |
+   | Secondary            | Cyan        | `#96f2d7` |
+   | Default stroke       | Dark        | `#1e1e1e` |
 
-Pairing `describe` with `screenshot` is what makes this skill powerful.
+### Step 5: Save and present
 
-- **`describe`** (`describe_scene` in MCP) → structured text: element IDs, types, positions, labels, connections. Use it to know *what's on the canvas* before making programmatic updates (find IDs, understand bounding boxes).
-- **`screenshot`** (`get_canvas_screenshot` in MCP) → PNG of the actual rendered canvas. Use it for *visual quality verification* — it shows exactly what the user sees, including truncation, overlap, and arrow routing. The CLI prints the saved file path as JSON; read/view that file.
+1. Save as `<descriptive-name>.excalidraw`.
+2. Provide a summary:
 
-**Feedback loop:**
-```
-add elements
-  → screenshot → view → "text truncated on auth-svc"
-  → update auth-svc --set '{"width": 220}' → screenshot → "overlap between auth-svc and rate-limiter"
-  → update rate-limiter --set '{"x": 520}' → screenshot → "all checks pass"
-  → proceed
-```
+   ```
+   Created: user-workflow.excalidraw
+   Type: Flowchart
+   Elements: 7 shapes, 6 arrows, 1 title
+   Total: 14 elements
 
-## Workflow: Refine an Existing Diagram
+   To view:
+   1. Visit https://excalidraw.com, then Open, then drag and drop the file.
+   2. Or use the Excalidraw VS Code extension.
+   3. Or open it in Obsidian with the Excalidraw plugin.
+   ```
 
-1. `describe` to understand current state — note element IDs and positions.
-2. Identify elements by `id` or label text (not by x/y coordinates — they change).
-3. `update <id> --set '{...}'` to resize/recolor/move; `delete <id>` to remove; or bundle everything in one `apply` patch. **Bound arrows re-route automatically when you move or resize their endpoints** — no need to delete and recreate them.
-4. `screenshot` to confirm the change looks right.
-5. If updates fail: check the ID exists with `get <id>`; unlock with `arrange unlock --ids <id>` if locked.
+## Templates
 
-## Workflow: Mermaid Conversion
+Pre-built templates live in `assets/` as starting points. Use one when the diagram type matches; it provides correct structure and styling, so read it before generating that type for the first time and then modify it to match the user's request.
 
-```bash
-echo 'graph TD
-  A[Client] --> B[API]
-  B --> C[(DB)]' | npx -y mcp-excalidraw-server mermaid
-```
-Requires an open browser tab (conversion runs in the frontend; exit code 4 tells you to open the canvas URL). Afterwards `screenshot` to verify layout. If the auto-layout is poor (nodes crowded, edges crossing), find problem elements with `describe` and reposition them with `update`.
+| Template          | File                                          |
+| ------------------ | ---------------------------------------------- |
+| Flowchart          | `assets/flowchart-template.json`               |
+| Relationship       | `assets/relationship-template.json`            |
+| Mind map           | `assets/mindmap-template.json`                 |
+| Data flow (DFD)    | `assets/data-flow-diagram-template.json`       |
+| Swimlane           | `assets/business-flow-swimlane-template.json`  |
+| Class diagram      | `assets/class-diagram-template.json`           |
+| Sequence diagram   | `assets/sequence-diagram-template.json`        |
+| ER diagram         | `assets/er-diagram-template.json`              |
 
-## Workflow: File I/O
+## Icon libraries
 
-- Export scene: `export --out diagram.excalidraw` (no `--out` → JSON to stdout)
-- Import scene: `import diagram.excalidraw` (append) or `import diagram.excalidraw --replace`
-- Image: `screenshot --out diagram.png` / `screenshot --format svg --out diagram.svg` (browser tab required)
-- Share link: `share` — encrypts the scene and returns a shareable excalidraw.com URL
+For architecture diagrams with service icons (AWS, GCP, Azure, and similar), read [`references/icon-libraries.md`](references/icon-libraries.md) when:
 
-This is how diagrams live in a repo: commit the `.excalidraw` file, and re-`import` + edit + `export` it when the architecture changes.
+- The user requests an AWS/cloud architecture diagram.
+- The user mentions wanting specific service icons.
+- You need to check whether icon libraries are already set up locally.
 
-### Obsidian vaults: use `.excalidraw.md`
+`scripts/split-excalidraw-library.py` splits a downloaded `.excalidrawlib` file into per-icon JSON so icon data does not have to enter the model's context, and `scripts/add-icon-to-diagram.py` inserts a chosen icon into a diagram deterministically. `scripts/add-arrow.py` computes correct `startBinding`/`endBinding` geometry for connecting two existing elements, use it instead of hand-computing arrow points and bindings.
 
-Check the destination before writing: if any ancestor directory contains `.obsidian/`, it is an Obsidian vault. A raw `.excalidraw` file there opens in the Excalidraw plugin only in **compatibility mode** ("Convert to new format" warning), gets no block references or vault-wide search, and default Obsidian Sync skips non-`.md` files. Give the export a `.excalidraw.md` extension and the CLI writes the plugin's native format automatically:
+## Best practices
 
-```bash
-npx -y mcp-excalidraw-server export --out "$VAULT/diagrams/system-map.excalidraw.md"   # .md → Obsidian format (or force with --format obsidian)
-npx -y mcp-excalidraw-server import "$VAULT/diagrams/system-map.excalidraw.md" --replace  # reads both plain and compressed Drawing blocks
-```
+### Element count
 
-Round-trips are safe: text-element block references follow the plugin's own id rules, so re-importing, editing, and re-exporting the same file keeps links from other notes intact.
+| Diagram type            | Recommended | Maximum |
+| ------------------------ | ------------ | ------- |
+| Flowchart steps          | 3-10         | 15      |
+| Relationship entities    | 3-8          | 12      |
+| Mind map branches        | 4-6          | 8       |
+| Sub-topics per branch    | 2-4          | 6       |
 
-## Workflow: Snapshots
+If the user's request exceeds the maximum, suggest breaking it into multiple diagrams:
 
-1. `snapshot save <name>` before risky changes.
-2. Make changes, evaluate with `describe` / `screenshot`.
-3. `snapshot restore <name>` to roll back if needed. `snapshot list` shows what's saved.
+> "Your request includes 15 components. For clarity, I recommend: (1) a high-level architecture diagram with 6 main components, (2) detailed sub-diagrams for each subsystem. Want me to start with the high-level view?"
 
-## Workflow: Duplication
+### Layout
 
-`arrange duplicate --ids a,b --offset 40,40` (default offset 20,20). Useful for repeated patterns or copying layouts.
+- **Flow direction**: left-to-right for processes, top-to-bottom for hierarchies.
+- **Spacing**: 200-300px horizontal, 100-150px vertical between elements.
+- **Grid alignment**: position on multiples of 20px for clean alignment.
+- **Margins**: at least 50px from the canvas edge.
+- **Text sizing**: 28-36px titles, 18-22px labels, 14-16px annotations.
+- **Font**: use `fontFamily: 5` (Excalifont) for hand-drawn consistency, falling back to `1` (Virgil) if 5 is not supported.
+- **Background zones**: for architecture diagrams, add semi-transparent dashed zone rectangles (`opacity: 35`, `strokeStyle: "dashed"`, `roughness: 0`) as the first elements in the array to create visual grouping regions. See [`references/excalidraw-schema.md`](references/excalidraw-schema.md) under Background Zones.
+- **Element order**: zones, then shapes, then arrows, then text elements, so z-index comes out right and text always renders on top.
 
-## Error Recovery
+### Common mistakes to avoid
 
-- **Exit code 3 (canvas unreachable)?** Auto-start is disabled (`EXCALIDRAW_NO_AUTOSTART=1`) or a non-loopback `EXPRESS_SERVER_URL` is set. Run `start` explicitly or fix the env.
-- **Exit code 4 (browser required)?** Open `http://127.0.0.1:3000` in a browser, then retry — screenshots, image export, viewport, and mermaid conversion render in the frontend.
-- **Elements not appearing?** Check `describe` — they may be off-screen. In MCP mode, use `set_viewport` with `scrollToContent: true`, or `scrollToElementIds` plus optional `viewportZoomFactor` to focus on a specific subgraph; in a browser, press the zoom-to-fit button.
-- **Arrow not connecting?** Verify element IDs with `get <id>`. Make sure `startElementId`/`endElementId` match existing element IDs.
-- **Canvas in a bad state?** `snapshot save` first, then `clear --yes` and rebuild. Or `snapshot restore` to go back.
-- **Element won't update?** It may be locked — `arrange unlock --ids <id>` first.
-- **Duplicate text elements / element count doubling?** The frontend auto-sync timer periodically writes the full Excalidraw scene back to the server. Excalidraw internally generates a bound text element for every shape with a label; clearing and re-sending elements can re-inject cached bound texts. Clean up: `query --type text` to find elements with a `containerId`, `delete` the unwanted ones, wait a few seconds for auto-sync to settle. The safest prevention: **never put labels on background zone rectangles** — use free-standing text elements.
+- Using `label: { text: "..." }` shorthand on shapes or arrows (not supported by the Excalidraw parser).
+- Putting `text` directly on shape elements without `containerId`.
+- Using `start`/`end` for arrow bindings; use `startBinding`/`endBinding` with `elementId`/`focus`/`gap` instead.
+- Forgetting to add arrows to their connected shapes' `boundElements` arrays.
+- Omitting `originalText`, `lineHeight`, `autoResize`, or `backgroundColor: "transparent"` from text elements inside containers.
+- Omitting required base properties (`angle`, `strokeStyle`, `opacity`, `groupIds`, `frameId`, `index`, `isDeleted`, `seed`, `version`, `versionNonce`, `updated`, `link`, `locked`); elements without them will not render.
+- Missing `"files": {}` at the top level of the JSON.
+- Using `roundness: { "type": 3 }` on ellipses; ellipses must use `roundness: null`.
+- Missing `lastCommittedPoint`, `startArrowhead`, `endArrowhead` on arrows.
+- Declaring text elements before arrows, so text renders underneath and gets obscured.
+- Floating arrows without bindings, so they will not move with shapes.
+- Overlapping elements; increase spacing instead.
+- Inconsistent color usage; define the palette upfront.
+- Too many elements on one diagram; break into sub-diagrams.
 
----
+## Validation checklist
 
-## References
+Before delivering the diagram, verify:
 
-- `references/cheatsheet.md`: full CLI reference, the 26 MCP tools, REST API endpoints + payload shapes, and the diagram design guide (colors, sizing).
+- [ ] All elements have unique IDs.
+- [ ] Every element has every required base property: `angle`, `strokeStyle`, `opacity`, `groupIds`, `frameId`, `index`, `isDeleted`, `link`, `locked`, `seed`, `version`, `versionNonce`, `updated`.
+- [ ] `index` values are assigned in order (`"a0"`, `"a1"`, ...), with text elements getting higher values than shapes/arrows.
+- [ ] The top-level JSON includes `"files": {}`.
+- [ ] Shapes with text use `boundElements` plus a separate text element with `containerId`.
+- [ ] Text elements inside containers have `containerId`, `originalText`, `lineHeight: 1.25`, `autoResize: true`, `roundness: null`, `backgroundColor: "transparent"`.
+- [ ] Arrows use `startBinding`/`endBinding` (with `elementId`, `focus`, `gap`) when connecting shapes, plus `lastCommittedPoint: null`, `startArrowhead: null`, `endArrowhead: "arrow"`.
+- [ ] Connected shapes list the arrow in their `boundElements` arrays.
+- [ ] Element order is shapes, then arrows, then text elements.
+- [ ] Ellipses use `roundness: null`, not `{ "type": 3 }`.
+- [ ] Coordinates avoid overlap (check spacing).
+- [ ] Text is readable (font size 16+).
+- [ ] Colors follow a consistent scheme.
+- [ ] The file is valid JSON.
+- [ ] Element count stays reasonable (under 20 for clarity).
+
+## Troubleshooting
+
+| Issue                          | Solution                                                                                       |
+| -------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Text not showing in shapes      | Use `boundElements` plus a separate text element with `containerId`, `originalText`, `lineHeight`. |
+| Text hidden behind arrows       | Move text elements to the end of the `elements` array, after all arrows.                          |
+| Arrows do not move with shapes  | Use `startBinding`/`endBinding` with `elementId`, `focus: 0`, `gap: 1`.                            |
+| Shape not moving with arrows    | Add the arrow to the shape's `boundElements` array.                                               |
+| Elements overlap                | Increase spacing between coordinates.                                                             |
+| Text does not fit               | Increase shape width or reduce font size.                                                         |
+| Too many elements               | Break into multiple diagrams.                                                                     |
+| Colors look inconsistent        | Define the color palette upfront and apply it consistently.                                       |
+
+## Limitations
+
+- Complex curves are simplified to straight or basic curved lines.
+- Hand-drawn roughness stays at the default (1) unless you set it explicitly.
+- No embedded images in auto-generation; use icon libraries for service icons.
+- Maximum recommended is 20 elements per diagram for clarity.
+- No automatic collision detection; follow the spacing guidelines instead.

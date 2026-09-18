@@ -1,0 +1,5 @@
+interface:
+  display_name: "Subagent Creator"
+  short_description: "Create an agent-agnostic subagent definition"
+policy:
+  allow_implicit_invocation: false
