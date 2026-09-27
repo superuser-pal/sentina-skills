@@ -12,10 +12,11 @@ The official router over the development skills in the Sentina ecosystem. Orient
 
 ## 0. Detect the Repo's Mode
 
-Check whether `.sentina/manifiesto.yaml` exists at the repo root (see `.agents/sentina-mode.md`):
+Check whether `.sentina/manifiesto.yaml` exists at the repo root, and if so read its `repo.tipo` (see `.agents/sentina-mode.md`):
 
-- **Present:** this is a Sentina repo, follow the Main Flow below.
-- **Absent:** this isn't a Sentina repo, either a personal project, or a Sentina clone that hasn't run `/setup-sentina` yet. Don't use `/setup-sentina`, `/grill-me`, `/to-spec`, `/implement`, or `/acceptance-test`: they assume Notion and the vault. Instead, follow the generic path:
+- **Present, `repo.tipo` not `personal`:** this is a Sentina product repo, follow the Main Flow below.
+- **Present, `repo.tipo: personal`:** a personal knowledge vault built on the Sentina template. It has no Notion task lifecycle, so take the generic path below, and let the repo's own `AGENTS.md` decide anything about its vault.
+- **Absent:** this isn't a Sentina repo, either a personal project, or a Sentina clone that hasn't run `/setup-sentina` yet. In this case and the personal case, don't use `/setup-sentina`, `/grill-me`, `/to-spec`, `/implement`, or `/acceptance-test`: they assume Notion and the delivery lifecycle. Instead, follow the generic path:
   1. `/grilling` to interrogate the requirement.
   2. Write a plain spec directly in the conversation (problem, files to touch, acceptance criteria): no vault frontmatter, no evidence schema.
   3. `/tdd` at the agreed seams to build it.

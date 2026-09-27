@@ -12,7 +12,7 @@ Implement the work described in a formal technical specification or approved tas
 
 ## Prerequisite
 
-This skill assumes a Sentina repo: confirm `.sentina/manifiesto.yaml` exists at the repo root (see `.agents/sentina-mode.md`). If it doesn't, stop: this isn't a Sentina repo (a personal project, or a Sentina clone that hasn't run `/setup-sentina` yet), and the vault sync, evidence schema, and anti-rationalization tables below don't apply. Tell the user to use `ask-sentina` for the generic path instead (plain spec, `/tdd`, `/code-review`, generic branch naming).
+This skill assumes a Sentina product repo: confirm `.sentina/manifiesto.yaml` exists at the repo root and its `repo.tipo` is not `personal` (see `.agents/sentina-mode.md`). If the file is missing, or declares `repo.tipo: personal`, stop: this isn't a Sentina repo (a personal project, a personal-profile vault, or a Sentina clone that hasn't run `/setup-sentina` yet), and the vault sync, evidence schema, and anti-rationalization tables below don't apply. Tell the user to use `ask-sentina` for the generic path instead (plain spec, `/tdd`, `/code-review`, generic branch naming).
 
 ---
 

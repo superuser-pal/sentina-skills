@@ -10,7 +10,7 @@ A mandatory manual gate between `/code-review` and opening the Pull Request. Gen
 
 ## Prerequisite
 
-This skill assumes a Sentina repo: confirm `.sentina/manifiesto.yaml` exists at the repo root (see `.agents/sentina-mode.md`). If it doesn't, stop: the `evidencia/<id>/` path and the `feat/tarea-<id>` lookup below don't apply. Tell the user to use `ask-sentina` for the generic path instead, a plain manual pass against the acceptance criteria, recorded wherever the project keeps its own notes.
+This skill assumes a Sentina product repo: confirm `.sentina/manifiesto.yaml` exists at the repo root and its `repo.tipo` is not `personal` (see `.agents/sentina-mode.md`). If the file is missing, or declares `repo.tipo: personal`, stop: the `evidencia/<id>/` path and the `feat/tarea-<id>` lookup below don't apply. Tell the user to use `ask-sentina` for the generic path instead, a plain manual pass against the acceptance criteria, recorded wherever the project keeps its own notes.
 
 ## Process
 
