@@ -32,3 +32,7 @@ Skills that assume Sentina infrastructure (Notion, the vault, `evidencia/`) must
 To (re)link every skill outside `deprecated/` and `misc/` into local harness skill directories (`~/.claude/skills`, `~/.agents/skills`), run `scripts/link-skills.sh`. Each entry is a symlink into this repo, so a `git pull` keeps installed skills current; re-run the script after adding, removing, or renaming a skill.
 
 No em-dashes anywhere in this repo's prose (`SKILL.md` files, `README.md`, `CHANGELOG.md`, code comments). Where a sentence reaches for one, rewrite it instead with a comma, colon, period, parentheses, or a conjunction, whichever the sentence actually wants; never do a blind character substitution.
+
+## Pull Request Workflow
+
+Agents work on a branch, push that branch, open a pull request, and leave merging to a human. An ambiguous request to “push to main” means push the working branch and open a pull request. Agents never push directly to `main`, use `--no-verify`, force-push, disable hooks, or otherwise bypass this workflow.
