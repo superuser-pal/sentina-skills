@@ -10,7 +10,7 @@ Audita y cuestiona activamente los requerimientos, minutas de Notion AI o solici
 
 ## Prerrequisito
 
-Este skill asume un repo Sentina: confirma que existe `.sentina/manifiesto.yaml` en la raíz del repo (ver `.agents/sentina-mode.md`). Si no existe, detente: esto no es un repo Sentina (proyecto personal, o un clon Sentina aún sin `/setup-sentina`), y el interrogatorio sobre Notion, el vault y las etiquetas de GHL no aplica. Indícale al usuario que use `ask-sentina` para el camino genérico (`/grilling` en su lugar).
+Este skill asume un repo de producto Sentina: confirma que existe `.sentina/manifiesto.yaml` en la raíz del repo y que su `repo.tipo` no es `personal` (ver `.agents/sentina-mode.md`). Si no existe, o declara `repo.tipo: personal`, detente: esto no es un repo de producto Sentina (proyecto personal, vault de perfil personal, o un clon Sentina aún sin `/setup-sentina`), y el interrogatorio sobre Notion, el vault y las etiquetas de GHL no aplica. Indícale al usuario que use `ask-sentina` para el camino genérico (`/grilling` en su lugar).
 
 Si la tarea viene de Notion, confirma que ya se hizo el bloqueo de concurrencia (§11.1.4): estado "En curso" y responsable asignado en la tarea de Notion. Si no se ha hecho, adviértelo antes de continuar: interrogar y planear sobre una tarea sin bloquear invita a que otra sesión tome el mismo trabajo en paralelo.
 

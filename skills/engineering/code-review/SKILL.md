@@ -33,13 +33,13 @@ Look for the originating spec, in this order:
 
 Check repository standards:
 - This repo's own documented standards: `CLAUDE.md`, `AGENTS.md`, and any linked style or architecture docs.
-- **In a Sentina repo** (`.sentina/manifiesto.yaml` present at the repo root, see `.agents/sentina-mode.md`), also read `.sentina/manifiesto.yaml` and `metodo/estandares/` (if present), and enforce these mandatory Sentina checks:
+- **In a Sentina product repo** (`.sentina/manifiesto.yaml` present at the repo root with `repo.tipo` other than `personal`, see `.agents/sentina-mode.md`), also read `.sentina/manifiesto.yaml` and `metodo/estandares/` (if present), and enforce these mandatory Sentina checks:
   - Cero PII de clientes en el diff.
   - Ninguna URL real de webhook en archivos de configuración o pruebas (deben usar variables de entorno).
   - Si se tocan etiquetas de GHL: verificar que tengan sus 5 columnas completas en `esquema/etiquetas.md` y quién las retira.
   - Si el cambio toca sistemas externos o contratos: comprobar existencia de `evidencia/<id>/meta.yaml` y artefactos.
   - Frontmatter válido en nodos Markdown bajo `OBSIDIAN_CATEGORIES`.
-- **Otherwise** (no `.sentina/manifiesto.yaml`), skip the Sentina-specific block above: it doesn't apply.
+- **Otherwise** (no `.sentina/manifiesto.yaml`, or `repo.tipo: personal`), skip the Sentina-specific block above: it doesn't apply. A personal-profile repo's own `AGENTS.md` carries its standards.
 
 On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below: a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
 

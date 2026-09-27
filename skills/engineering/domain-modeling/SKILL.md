@@ -11,9 +11,10 @@ Construye y afila activamente el modelo de dominio y la terminología del proyec
 
 ## Detectar el Modo del Repo
 
-Confirma si existe `.sentina/manifiesto.yaml` en la raíz del repo (ver `.agents/sentina-mode.md`):
+Confirma si existe `.sentina/manifiesto.yaml` en la raíz del repo y, si existe, lee su `repo.tipo` (ver `.agents/sentina-mode.md`):
 
-- **Presente (modo Sentina):** el dominio vive en el grafo de conocimiento bajo `contexto/`, como se describe abajo.
+- **Presente, `repo.tipo` distinto de `personal` (modo Sentina):** el dominio vive en el grafo de conocimiento bajo `contexto/`, como se describe abajo.
+- **Presente, `repo.tipo: personal` (modo personal):** el repo tiene vault propio, pero no ciclo de entrega Sentina. El `AGENTS.md` del repo es la única autoridad sobre dónde vive el glosario, en qué idioma se escribe y cómo se registran las decisiones; síguelo y no crees un `CONTEXT.md` paralelo.
 - **Ausente (modo genérico):** no hay vault. El dominio vive en el `CONTEXT.md` de la raíz del repo (créalo si no existe): un glosario plano, sin frontmatter ni grafo. Las decisiones arquitectónicas notables e irreversibles se registran como entradas fechadas dentro del mismo `CONTEXT.md`, no como nodos separados.
 
 ---

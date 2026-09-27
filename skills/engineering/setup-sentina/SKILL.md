@@ -17,7 +17,7 @@ This is a prompt-driven skill, not a deterministic script. Explore, present what
 Look at the current repo before assuming anything:
 
 - `git remote -v`: does the remote name match one of the four Sentina repo shapes (`sentina-notion`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`)?
-- `.sentina/manifiesto.yaml`: does it already exist? If so, this repo is already profiled: skip to step 5 and offer to review/update it instead of scaffolding from scratch.
+- `.sentina/manifiesto.yaml`: does it already exist? If it declares `repo.tipo: personal`, stop: this is a personal-profile vault (see `.agents/sentina-mode.md`), not a product repo, and must not be re-profiled or connected to the delivery lifecycle. Otherwise the repo is already profiled: skip to step 5 and offer to review/update it instead of scaffolding from scratch.
 - `scaffold.py` at the repo root: does it exist? Without it, this repo isn't a Sentina template clone and scaffolding can't run here; tell the user and stop.
 - `contexto/`, `bases/`, `esquema/`, `producto/`: which of these already exist, and do they look populated or empty?
 - `CLAUDE.md` / `AGENTS.md`: does either already reference the Sentina skill set?
