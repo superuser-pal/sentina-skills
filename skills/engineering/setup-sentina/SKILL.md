@@ -1,6 +1,6 @@
 ---
 name: setup-sentina
-description: "Scaffold a fresh Sentina repo clone: confirm its profile, run scaffold.py, and record the Notion connection in .sentina/manifiesto.yaml. Run once before the first engineering flow."
+description: "Scaffold a fresh Sentina repo clone: confirm its profile, run scaffold.py, and record the Notion connection in .sentina/manifiesto.yaml. In a personal repo, only record its task database. Run once before the first engineering flow."
 disable-model-invocation: true
 ---
 
@@ -17,8 +17,8 @@ This is a prompt-driven skill, not a deterministic script. Explore, present what
 Look at the current repo before assuming anything:
 
 - `git remote -v`: does the remote name match one of the four Sentina repo shapes (`sentina-notion`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`)?
-- `.sentina/manifiesto.yaml`: does it already exist? If it declares `repo.tipo: personal`, stop: this is a personal-profile vault (see `.agents/sentina-mode.md`), not a product repo, and must not be re-profiled or connected to the delivery lifecycle. Otherwise the repo is already profiled: skip to step 5 and offer to review/update it instead of scaffolding from scratch.
-- `scaffold.py` at the repo root: does it exist? Without it, this repo isn't a Sentina template clone and scaffolding can't run here; tell the user and stop.
+- `.sentina/manifiesto.yaml`: does it already exist? If it declares `repo.tipo: personal`, go to [Personal repos](#personal-repos): the repo must never be re-profiled or connected to the delivery lifecycle. Otherwise the repo is already profiled: skip to step 5 and offer to review/update it instead of scaffolding from scratch.
+- `scaffold.py` at the repo root: does it exist? Without it, this repo isn't a Sentina template clone and scaffolding can't run here. Ask the user whether it is a personal repo whose tasks should go to a Notion database; if so, go to [Personal repos](#personal-repos), otherwise stop.
 - `contexto/`, `bases/`, `esquema/`, `producto/`: which of these already exist, and do they look populated or empty?
 - `CLAUDE.md` / `AGENTS.md`: does either already reference the Sentina skill set?
 
@@ -45,10 +45,12 @@ Ask the user to confirm before running it. Do not run it unprompted.
 
 After scaffolding, `.sentina/manifiesto.yaml` exists but its `notion.tareas` and `notion.registro_de_cambios` database IDs are placeholders. Ask the user for the real Notion database IDs or URLs for:
 
-- `notion.tareas`: the tasks/backlog database this repo's `ask-sentina` flow reads and writes (§11), and the one a product repo's `CHANGELOG.md` Backlog section links to.
+- `notion.tareas`: the tasks/backlog database this repo's `ask-sentina` flow reads and writes (§11), the one `/to-tickets` publishes to, and the one a product repo's `CHANGELOG.md` Backlog section links to.
 - `notion.registro_de_cambios`: the change-log database Notion AI meeting notes land in.
 
 Write them into `.sentina/manifiesto.yaml` directly; don't invent a separate docs file, this manifest is already the single source of truth every Sentina skill reads.
+
+Also record `notion.estados`: the status property name and the values for a new ticket, work started, and work done. `en_curso` is `En curso` and `completada` is `Completada` under §11; ask for `inicial`.
 
 If the profile is `cliente`, also confirm `cliente.pagina_notion` (the client's Notion page ID) and `cliente.estado`.
 
@@ -59,3 +61,32 @@ Read `secretos.requeridos` in the freshly written (or existing) manifest. Confir
 ### 6. Done
 
 Tell the user setup is complete, show the final `.sentina/manifiesto.yaml`, and name the first skill to run next: `/grill-me`, or `/ask-sentina` if they're unsure where to start. Mention that re-running this skill on an already-profiled repo only reviews and updates the Notion IDs and secret names, since `scaffold.py` itself refuses to run twice.
+
+## Personal repos
+
+A personal repo (`repo.tipo: personal`) never runs `scaffold.py`, never gets vault categories, and never joins the delivery lifecycle. This skill only records where its tasks go, so `/to-tickets` and `ask-sentina` can use them.
+
+1. **Confirm the database and project.** Ask for the task database and the canonical project ID (`proyecto:<slug>`) of the Project the repo's tasks belong to. Keep Notion IDs out of the personal repo: record the database by name as `"<Parent page>/<Database>"`, never as an ID or URL. Resolve both through the Notion API before writing, exactly as `/to-tickets` does, and stop if either matches zero or several records.
+2. **Write the manifest.** If `.sentina/manifiesto.yaml` exists, add or update only its `notion` block and leave every other key alone. If it doesn't exist, create this minimal manifest (the repo's own `AGENTS.md` still governs everything else):
+
+   ```yaml
+   version_esquema: 2
+
+   repo:
+     tipo: personal
+     id: <repo-name>
+
+   notion:
+     tareas: "Backend PB/Tasks"
+     proyecto: proyecto:<slug>
+     estados:
+       propiedad: Status
+       inicial: Next
+       en_curso: In progress
+       completada: Done
+   ```
+
+   The `estados` values shown are the personal Tasks database's; confirm them against the schema you resolved.
+3. **Validate.** If the repo has `.github/scripts/guardian.py`, run it and fix what it reports.
+4. **Done.** Show the final manifest and name the next skill: `/grilling`, then `/to-tickets`.
+

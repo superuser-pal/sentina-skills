@@ -160,7 +160,7 @@ Las habilidades se clasifican según su forma de ejecución:
 
 Habilidades de proceso guiado, ejecutadas por el desarrollador mediante comando:
 
-- **[setup-sentina](./skills/engineering/setup-sentina/SKILL.md)**: Scaffolding de un repo Sentina recién clonado: confirma su perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. Ejecútalo una sola vez antes del primer flujo de ingeniería.
+- **[setup-sentina](./skills/engineering/setup-sentina/SKILL.md)**: Scaffolding de un repo Sentina recién clonado: confirma su perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. En un repo personal solo registra su base de tareas. Ejecútalo una sola vez antes del primer flujo de ingeniería.
 - **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: Enrutador y orquestador del flujo de trabajo de desarrollo en repositorios Sentina.
 - **[to-spec](./skills/engineering/to-spec/SKILL.md)**: Transforma acuerdos o minutas de reunión en especificaciones técnicas atómicas con frontmatter de grafo completo, aristas y validación de invariantes.
 - **[implement](./skills/engineering/implement/SKILL.md)**: Conduce la implementación técnica en la rama `feat/tarea-*` con pruebas locales, evidencia obligatoria y apego al esquema del vault.

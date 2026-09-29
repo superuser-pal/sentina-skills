@@ -15,13 +15,19 @@ The official router over the development skills in the Sentina ecosystem. Orient
 Check whether `.sentina/manifiesto.yaml` exists at the repo root, and if so read its `repo.tipo` (see `.agents/sentina-mode.md`):
 
 - **Present, `repo.tipo` not `personal`:** this is a Sentina product repo, follow the Main Flow below.
-- **Present, `repo.tipo: personal`:** a personal knowledge vault built on the Sentina template. It has no Notion task lifecycle, so take the generic path below, and let the repo's own `AGENTS.md` decide anything about its vault.
-- **Absent:** this isn't a Sentina repo, either a personal project, or a Sentina clone that hasn't run `/setup-sentina` yet. In this case and the personal case, don't use `/setup-sentina`, `/grill-me`, `/to-spec`, `/implement`, or `/acceptance-test`: they assume Notion and the delivery lifecycle. Instead, follow the generic path:
+- **Present, `repo.tipo: personal`:** a personal repo, with or without a vault. It has no Sentina delivery lifecycle, so take the generic path below, and let the repo's own `AGENTS.md` decide anything about its vault. If its manifest names a task database, the generic path also keeps that database's status current (see below).
+- **Absent:** this isn't a Sentina repo, either a personal project, or a Sentina clone that hasn't run `/setup-sentina` yet. In this case and the personal case, don't use `/grill-me`, `/to-spec`, `/implement`, or `/acceptance-test`: they assume Notion and the delivery lifecycle. `/setup-sentina` runs in a personal repo only to record its task database. Instead, follow the generic path:
   1. `/grilling` to interrogate the requirement.
   2. Write a plain spec directly in the conversation (problem, files to touch, acceptance criteria): no vault frontmatter, no evidence schema.
   3. `/tdd` at the agreed seams to build it.
   4. `/code-review`: its Standards axis still applies generically, and the Sentina-only checks skip themselves.
   5. `/git-workflow-and-versioning`'s generic branch naming (`feature/<description>`) and commit discipline, then open the PR.
+
+  **Personal task status.** In personal mode, when the manifest has a `notion` block naming a task database, `/to-tickets` publishes there, and the agent keeps status current through the Notion API:
+  - Starting work on a task: set it to `notion.estados.en_curso`.
+  - Finishing it (the work is merged, or the user says it's done): set it to `notion.estados.completada`, and set `Completed At` to today if that property exists.
+
+  There is no owner assignment, no concurrency lock, and no GitHub Actions transition. Resolve the database exactly as `/to-tickets` does, and if the session has no Notion connection, tell the user which status to set by hand.
 
 ---
 
@@ -100,4 +106,4 @@ This is the standard path for all development in Sentina repositories (`sentina-
 
 ## Precondition
 
-**`/setup-sentina`**: run once on a freshly cloned Sentina repo, before step 1 of the main flow. It confirms the repo's profile, runs `scaffold.py`, and records the Notion connection in `.sentina/manifiesto.yaml`, the file every skill above reads. If `.sentina/manifiesto.yaml` already exists, the repo is already set up and you can skip straight to step 1.
+**`/setup-sentina`**: run once on a freshly cloned Sentina repo, before step 1 of the main flow. It confirms the repo's profile, runs `scaffold.py`, and records the Notion connection in `.sentina/manifiesto.yaml`, the file every skill above reads. If `.sentina/manifiesto.yaml` already exists, the repo is already set up and you can skip straight to step 1. In a personal repo it only records the task database (`notion.tareas`, `notion.proyecto`, `notion.estados`) and runs no scaffold.

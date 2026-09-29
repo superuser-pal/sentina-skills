@@ -132,7 +132,7 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 ### B. Habilidades de Ingeniería: Flujo de Trabajo (User-Invoked)
 *Invocadas manualmente por ti. En Codex utiliza `$nombre-del-skill`; en Claude Code utiliza `/nombre-del-skill`.*
 
-* [`setup-sentina`](./skills/engineering/setup-sentina/SKILL.md): Scaffolding de un repo recién clonado: confirma el perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. Ejecútalo una sola vez, antes de todo lo demás.
+* [`setup-sentina`](./skills/engineering/setup-sentina/SKILL.md): Scaffolding de un repo recién clonado: confirma el perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. En un repo personal solo registra su base de tareas. Ejecútalo una sola vez, antes de todo lo demás.
 * [`to-spec`](./skills/engineering/to-spec/SKILL.md): Transforma la conversación, minuta de Notion AI o requerimiento en una especificación técnica formal atómica. Obliga a definir archivos, nodos de grafo, pruebas y cumplimiento de las 4 tablas.
 * [`implement`](./skills/engineering/implement/SKILL.md): Conduce el desarrollo estricto en la rama `feat/tarea-*`. Hace cumplir las pruebas locales, la generación de evidencia y bloquea atajos mediante las tablas anti-racionalización.
 * [`acceptance-test`](./skills/engineering/acceptance-test/SKILL.md): Genera el documento de pruebas de aceptación a partir de los criterios del spec y bloquea el PR hasta que un humano lo complete contra el sistema real.
