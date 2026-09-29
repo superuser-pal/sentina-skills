@@ -54,10 +54,12 @@ Ask the user to confirm before running it. Do not run it unprompted.
 
 After scaffolding, `.sentina/manifiesto.yaml` exists but its `notion.tareas` and `notion.registro_de_cambios` database IDs are placeholders. Ask the user for the real Notion database IDs or URLs for:
 
-- `notion.tareas`: the tasks/backlog database this repo's `ask-sentina` flow reads and writes (§11), and the one a product repo's `CHANGELOG.md` Backlog section links to.
+- `notion.tareas`: the tasks/backlog database this repo's `ask-sentina` flow reads and writes (§11), the one `/to-tickets` publishes to, and the one a product repo's `CHANGELOG.md` Backlog section links to.
 - `notion.registro_de_cambios`: the change-log database Notion AI meeting notes land in.
 
 Write them into `.sentina/manifiesto.yaml` directly; don't invent a separate docs file, this manifest is already the single source of truth every Sentina skill reads.
+
+Also record `notion.estados`: the status property name and the values for a new ticket, work started, and work done. `en_curso` is `En curso` and `completada` is `Completada` under §11; ask for `inicial`.
 
 If the profile is `cliente`, also confirm `cliente.pagina_notion` (the client's Notion page ID) and `cliente.estado`.
 

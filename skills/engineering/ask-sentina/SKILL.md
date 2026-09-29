@@ -24,6 +24,12 @@ Check whether `.sentina/manifiesto.yaml` exists at the repo root, and if so read
   6. `/code-review`: its Standards axis still applies generically, and the Sentina-only checks skip themselves.
   7. `/git-workflow-and-versioning`'s generic branch naming (`feature/<description>`) and commit discipline, then open the PR.
 
+  **Personal task status.** In personal mode, when the manifest has a `notion` block naming a task database, `/to-tickets` publishes there, and the agent keeps status current through the Notion API:
+  - Starting work on a task: set it to `notion.estados.en_curso`.
+  - Finishing it (the work is merged, or the user says it's done): set it to `notion.estados.completada`, and set `Completed At` to today if that property exists.
+
+  There is no owner assignment, no concurrency lock, and no GitHub Actions transition. Resolve the database exactly as `/to-tickets` does, and if the session has no Notion connection, tell the user which status to set by hand.
+
 ---
 
 ## 1. The Main Flow: Notion Task → PR with Evidence

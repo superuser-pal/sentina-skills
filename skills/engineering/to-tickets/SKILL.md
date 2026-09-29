@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Break a plan, spec, or conversation into a set of **tickets**: tracer-bullet vertical slices, each declaring the tickets that **block** it.
 
-In Sentina repositories, tasks and issues are typically derived from Notion tasks or tracked locally as slices.
+The tracker comes from the repo, never from a guess: if `.sentina/manifiesto.yaml` names a task database (see [Notion tracker](#notion-tracker)), publish there, in both Sentina mode and personal mode. Otherwise use the tracker the user names, or local files.
 
 ## Process
 
@@ -60,6 +60,7 @@ Iterate until the user approves the breakdown.
 Publish the approved tickets. The tickets are the same either way, only the shape of the blocking edges changes:
 
 - **Local files** → write one file per ticket under `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01` in dependency order (blockers first). Each file's "Blocked by" lists the numbers/titles it depends on. Use the per-ticket file template below: one ticket per file, never a single combined file.
+- **Notion** (the manifest names a task database) → follow [Notion tracker](#notion-tracker) below.
 - **A real issue tracker (GitHub, Linear, …)** → publish one issue per ticket in dependency order (blockers first) so each ticket's blocking edges can reference real identifiers. Use the platform's native blocking / sub-issue relationship where it has one; otherwise set each ticket's "Blocked by" to the blocking issues. Apply the `ready-for-agent` triage label unless instructed otherwise; the tickets are agent-grabbable by construction.
 
 Work the **frontier**: any ticket whose blockers are all done. For a purely linear chain that means top to bottom.
@@ -103,3 +104,30 @@ The end-to-end behaviour this ticket makes work, from the user's perspective, no
 </issue-template>
 
 In either form, avoid specific file paths or code snippets: they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Trim to the decision-rich parts, not a working demo, just the important bits.
+
+## Notion tracker
+
+Use this when `.sentina/manifiesto.yaml` has a `notion` block naming a task database. All writes go through the Notion API connection available in the session; if there is none, publish local files instead and say so.
+
+### Resolve the database
+
+Read the task database key: `notion.tareas`, or `notion.tareas_<entorno_activo>` when `notion.entorno_activo` is set.
+
+- A UUID or a Notion URL: retrieve it and use its data source. A URL's `v=` parameter is a view, never a data source.
+- A name of the form `"<Parent page>/<Database>"` (personal repos keep Notion IDs out of git): search data sources by the database title and keep those whose parent page has that title.
+
+Exactly one data source must match. With zero or several, stop and report the candidates; never pick one.
+
+Then retrieve the data source schema and map the ticket onto it by type, not by a hardcoded name:
+
+- **Title**: the property of type `title`.
+- **Status**: the property named in `notion.estados.propiedad` (default `Status`), set to `notion.estados.inicial`. It may be a `select` or a `status` property; write the value in the shape its type expects. If `notion.estados` is absent, ask the user for the initial value once and suggest recording it in the manifest.
+- **Project**: when `notion.proyecto` is set, it is a canonical project ID (for example `proyecto:ai-investment-framework`). Find the relation property that points at a projects database, query that database for the record whose `Canonical Project ID` equals the value, and link it. Zero or several matches: stop and report.
+- **Blocked by**: if the schema has a self-relation named `Blocked by`, link each ticket to its blockers. Otherwise write the blockers as text in the page body.
+- **Source Repo**: if a select property with that name exists, set it to `repo.id`.
+
+### Publish
+
+Create one page per ticket in dependency order (blockers first), so the blocking edges can reference pages that already exist. The page body carries the issue template above, without the "Blocked by" section when the relation holds it. Do not set any other property, and never change existing pages.
+
+Report each created page's title and link.
