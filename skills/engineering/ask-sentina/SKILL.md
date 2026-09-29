@@ -1,7 +1,6 @@
 ---
 name: ask-sentina
-description: Router for the Sentina development flow. Guides which skill to use depending on the phase of work (from Notion/meeting notes to the PR verified with evidence).
-disable-model-invocation: true
+description: "Router for the Sentina development flow. Use when the user is starting or unsure how to continue a development task, asks what skill or step comes next, mentions a Notion task or meeting note that needs to become code, or when you need to orient yourself on which skill covers the current phase of work in this repo, from inbound Notion task to the PR verified with evidence."
 ---
 
 # Ask Sentina
@@ -15,13 +14,15 @@ The official router over the development skills in the Sentina ecosystem. Orient
 Check whether `.sentina/manifiesto.yaml` exists at the repo root, and if so read its `repo.tipo` (see `.agents/sentina-mode.md`):
 
 - **Present, `repo.tipo` not `personal`:** this is a Sentina product repo, follow the Main Flow below.
-- **Present, `repo.tipo: personal`:** a personal knowledge vault built on the Sentina template. It has no Notion task lifecycle, so take the generic path below, and let the repo's own `AGENTS.md` decide anything about its vault.
-- **Absent:** this isn't a Sentina repo, either a personal project, or a Sentina clone that hasn't run `/setup-sentina` yet. In this case and the personal case, don't use `/setup-sentina`, `/grill-me`, `/to-spec`, `/implement`, or `/acceptance-test`: they assume Notion and the delivery lifecycle. Instead, follow the generic path:
-  1. `/grilling` to interrogate the requirement.
-  2. Write a plain spec directly in the conversation (problem, files to touch, acceptance criteria): no vault frontmatter, no evidence schema.
-  3. `/tdd` at the agreed seams to build it.
-  4. `/code-review`: its Standards axis still applies generically, and the Sentina-only checks skip themselves.
-  5. `/git-workflow-and-versioning`'s generic branch naming (`feature/<description>`) and commit discipline, then open the PR.
+- **Present, `repo.tipo: personal`:** a personal knowledge vault built on the Sentina template. It has no Notion task lifecycle, so take the generic path below starting at step 3 (skip the `setup-sentina` offer in step 1: it's already profiled and must not be re-profiled), and let the repo's own `AGENTS.md` decide anything about its vault.
+- **Absent:** this isn't a Sentina repo, either a generic project, or a Sentina clone that hasn't run `setup-sentina` yet. Don't use `/grill-me`, `/to-spec`, `/implement`, or `/acceptance-test`: they assume the delivery lifecycle. Instead, follow the generic path:
+  1. If neither `.sentina/manifiesto.yaml` nor `.sentina/notion-tasks.yaml` exists yet, you may call the Skill tool with `setup-sentina` once, to offer wiring up a Notion tasks database (it also confirms if the user just wants a fully local flow instead, or scaffolds a genuine Sentina clone if that's actually what this repo is). Don't re-offer it once the user has answered either way; if they're clearly mid-task and just want to move, skip straight to step 2.
+  2. If `.sentina/notion-tasks.yaml` exists, pull the task from the Notion database it names before interrogating it, and update its status by hand when the PR merges: there's no automated outbound sync outside a full Sentina repo (unlike step 8 of the Main Flow below).
+  3. `/grilling` to interrogate the requirement.
+  4. Write a plain spec directly in the conversation (problem, files to touch, acceptance criteria): no vault frontmatter, no evidence schema.
+  5. `/tdd` at the agreed seams to build it.
+  6. `/code-review`: its Standards axis still applies generically, and the Sentina-only checks skip themselves.
+  7. `/git-workflow-and-versioning`'s generic branch naming (`feature/<description>`) and commit discipline, then open the PR.
 
 ---
 
@@ -100,4 +101,4 @@ This is the standard path for all development in Sentina repositories (`sentina-
 
 ## Precondition
 
-**`/setup-sentina`**: run once on a freshly cloned Sentina repo, before step 1 of the main flow. It confirms the repo's profile, runs `scaffold.py`, and records the Notion connection in `.sentina/manifiesto.yaml`, the file every skill above reads. If `.sentina/manifiesto.yaml` already exists, the repo is already set up and you can skip straight to step 1.
+**`setup-sentina`**: bootstraps `.sentina/` config before other skills need it. On a freshly cloned Sentina repo, run it once before step 1 of the Main Flow: it confirms the repo's profile, runs `scaffold.py`, and records the Notion connection in `.sentina/manifiesto.yaml`, the file every skill above reads. If `.sentina/manifiesto.yaml` already exists, the repo is already set up and you can skip straight to step 1 (Sentina mode) or the generic path (Personal mode). On a generic repo, it instead offers the lightweight `.sentina/notion-tasks.yaml` opt-in described in §0 above; it never creates the vault there.

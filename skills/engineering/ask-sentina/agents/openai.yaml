@@ -1,5 +1,3 @@
 interface:
   display_name: "Ask Sentina"
   short_description: "Router for Sentina development skills"
-policy:
-  allow_implicit_invocation: false

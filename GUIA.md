@@ -20,7 +20,7 @@ Las habilidades aquí reunidas están diseñadas para interactuar directamente c
 
 ## 2. El Flujo de Trabajo Sentina: De Notion a Producción (Paso a Paso)
 
-**Antes de empezar en un repo recién clonado:** ejecuta `$setup-sentina` una sola vez para confirmar el perfil, correr `scaffold.py` y registrar la conexión con Notion en `.sentina/manifiesto.yaml`. Si ese archivo ya existe, el repo ya está perfilado y puedes saltar directo al Paso 1.
+**Antes de empezar en un repo recién clonado:** `setup-sentina` confirma el perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. Es reactiva: el agente la ofrece sola al detectar un repo sin `.sentina/` configurado, o puedes pedirla con `$setup-sentina`. Si ese archivo ya existe, el repo ya está perfilado y puedes saltar directo al Paso 1. En un repo genérico (sin `scaffold.py` ni vault) ofrece en cambio solo conectar las tareas a Notion, sin crear el vault.
 
 Todo ciclo de desarrollo en Sentina sigue un flujo disciplinado de 8 pasos:
 
@@ -125,14 +125,13 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 
 ### A. El Enrutador Central
 
-* [`ask-sentina`](./skills/engineering/ask-sentina/SKILL.md): **¿No sabes qué skill usar? Ejecuta `$ask-sentina` en Codex.** Te guía exactamente por qué camino ir según en qué fase de tu tarea te encuentres (desde la idea inicial hasta el PR).
+* [`ask-sentina`](./skills/engineering/ask-sentina/SKILL.md): **¿No sabes qué skill usar?** El agente lo consulta solo cuando no está claro qué sigue; también puedes pedirlo con `$ask-sentina` en Codex. Te guía exactamente por qué camino ir según en qué fase de tu tarea te encuentres (desde la idea inicial hasta el PR).
 
 ---
 
 ### B. Habilidades de Ingeniería: Flujo de Trabajo (User-Invoked)
 *Invocadas manualmente por ti. En Codex utiliza `$nombre-del-skill`; en Claude Code utiliza `/nombre-del-skill`.*
 
-* [`setup-sentina`](./skills/engineering/setup-sentina/SKILL.md): Scaffolding de un repo recién clonado: confirma el perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. Ejecútalo una sola vez, antes de todo lo demás.
 * [`to-spec`](./skills/engineering/to-spec/SKILL.md): Transforma la conversación, minuta de Notion AI o requerimiento en una especificación técnica formal atómica. Obliga a definir archivos, nodos de grafo, pruebas y cumplimiento de las 4 tablas.
 * [`implement`](./skills/engineering/implement/SKILL.md): Conduce el desarrollo estricto en la rama `feat/tarea-*`. Hace cumplir las pruebas locales, la generación de evidencia y bloquea atajos mediante las tablas anti-racionalización.
 * [`acceptance-test`](./skills/engineering/acceptance-test/SKILL.md): Genera el documento de pruebas de aceptación a partir de los criterios del spec y bloquea el PR hasta que un humano lo complete contra el sistema real.
@@ -147,6 +146,7 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 ### C. Habilidades de Calidad, Arquitectura y Hardening (Model-Invoked)
 *El agente las activa de forma autónoma cuando la tarea lo requiere, o las puedes llamar tú.*
 
+* [`setup-sentina`](./skills/engineering/setup-sentina/SKILL.md): Bootstrap de `.sentina/`: en un repo recién clonado confirma el perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`; en un repo genérico, ofrece únicamente conectar sus tareas a una base de Notion sin crear el vault.
 * [`security-and-hardening`](./skills/engineering/security-and-hardening/SKILL.md): Auditoría preventiva contra vulnerabilidades OWASP, modelo STRIDE, control riguroso de secretos y anonimización de PII de clientes.
 * [`code-simplification`](./skills/engineering/code-simplification/SKILL.md): "Claridad sobre astucia". Limpia complejidad innecesaria y deuda técnica en el código sin cambiar su comportamiento externo.
 * [`deprecation-and-migration`](./skills/engineering/deprecation-and-migration/SKILL.md): Retiro seguro de código, APIs y esquemas de base de datos usando el patrón *expand/contract*, alineado con la bi-temporalidad de Sentina.
@@ -219,4 +219,4 @@ En Codex, ejecuta `/skills` para abrir el selector y escribe `$nombre-del-skill`
 
 1. **Nunca dejes que el agente empiece a programar sin un spec:** En Codex, pasa siempre por `$grill-me` y `$to-spec`. Diez minutos de preguntas previas ahorran horas de refactorizaciones.
 2. **Exige la evidencia en la rama:** El merge en `main` dispara la publicación automática hacia Notion. Si la evidencia no está en `evidencia/<id>/meta.yaml` antes de abrir el PR, el workflow no tendrá nada que reportar.
-3. **Consulta al enrutador cuando tengas dudas:** Escribe `$ask-sentina` en Codex y deja que el sistema te indique qué habilidad te conviene ejecutar a continuación.
+3. **Consulta al enrutador cuando tengas dudas:** el agente suele traer `ask-sentina` solo, pero también puedes escribir `$ask-sentina` en Codex y dejar que el sistema te indique qué habilidad te conviene ejecutar a continuación.

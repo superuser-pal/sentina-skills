@@ -6,8 +6,6 @@ Skills for daily engineering work in Sentina repositories.
 
 Reachable only when explicitly invoked by the developer (`disable-model-invocation: true`).
 
-- **[setup-sentina](./setup-sentina/SKILL.md)**: Scaffolds a fresh Sentina repo clone: confirms its profile, runs `scaffold.py`, and records the Notion connection in `.sentina/manifiesto.yaml`. Run once before the first engineering flow.
-- **[ask-sentina](./ask-sentina/SKILL.md)**: Router for the Sentina development workflow: guides which skill to use from Notion task to PR with evidence.
 - **[to-spec](./to-spec/SKILL.md)**: Turn a Notion AI minute, conversation, or task into an atomic, formal technical specification with graph IDs and anti-rationalization validation.
 - **[implement](./implement/SKILL.md)**: Disciplined execution on branch `feat/tarea-*` following a spec, with local validation, required evidence in `evidencia/<id>/meta.yaml`, and strict anti-rationalization tables.
 - **[acceptance-test](./acceptance-test/SKILL.md)**: Generates the manual acceptance-test document from the spec's criteria and gates the PR on a human completing it against the live system.
@@ -21,6 +19,8 @@ Reachable only when explicitly invoked by the developer (`disable-model-invocati
 
 Model- or user-reachable skills that trigger automatically or on request.
 
+- **[ask-sentina](./ask-sentina/SKILL.md)**: Router for the Sentina development workflow: guides which skill to use from Notion task to PR with evidence.
+- **[setup-sentina](./setup-sentina/SKILL.md)**: Bootstraps `.sentina/` config: scaffolds a fresh Sentina repo clone, or, on a generic repo with no vault, optionally wires up a Notion tasks database instead. Fires once before the first engineering flow.
 - **[security-and-hardening](./security-and-hardening/SKILL.md)**: Threat-first hardening, input validation, secrets protection, and zero customer PII in Git repositories.
 - **[code-simplification](./code-simplification/SKILL.md)**: Clarity over cleverness: simplify code, eliminate cognitive debt, and maintain green tests.
 - **[deprecation-and-migration](./deprecation-and-migration/SKILL.md)**: Safe deprecations and expand-contract migrations for schemas, APIs, and legacy contracts.
