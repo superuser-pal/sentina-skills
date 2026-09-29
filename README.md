@@ -18,7 +18,7 @@ En Sentina el desarrollo asistido por IA se rige por tres pilares fundamentales:
 
 ## El Ciclo de Desarrollo Sentina
 
-**Antes de empezar en un repo Sentina recién clonado:** ejecuta `$setup-sentina` una sola vez para confirmar el perfil del repositorio, correr `scaffold.py` y registrar la conexión con Notion en `.sentina/manifiesto.yaml`. Si el repo ya está perfilado (el archivo ya existe), el resto de las habilidades de este ciclo asumen esa configuración y no necesitas repetirlo.
+**Antes de empezar en un repo Sentina recién clonado:** `setup-sentina` confirma el perfil del repositorio, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. Es una habilidad reactiva: el agente la ofrece sola al detectar un repo sin `.sentina/` configurado, aunque también puedes pedirla explícitamente con `$setup-sentina`. Si el repo ya está perfilado (el archivo ya existe), el resto de las habilidades de este ciclo asumen esa configuración y no necesitas repetirlo. En un repo genérico (sin `scaffold.py` ni vault), en cambio, ofrece únicamente conectar las tareas a una base de Notion mediante `.sentina/notion-tasks.yaml`, sin crear el vault.
 
 Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de ocho etapas:
 
@@ -143,7 +143,7 @@ El repositorio cuenta con compatibilidad dual nativa:
 
 Las habilidades se clasifican según su forma de ejecución:
 
-1. **User-invoked (Manuales):** Herramientas de proceso invocadas directamente por el usuario para guiar fases clave del ciclo de desarrollo. En Codex se mencionan con `$`, por ejemplo `$ask-sentina`, `$grill-me`, `$to-spec` y `$implement`. En Claude Code se invocan con `/`, por ejemplo `/ask-sentina`. Tienen la invocación autónoma del modelo desactivada para evitar ejecuciones accidentales.
+1. **User-invoked (Manuales):** Herramientas de proceso invocadas directamente por el usuario para guiar fases clave del ciclo de desarrollo. En Codex se mencionan con `$`, por ejemplo `$grill-me`, `$to-spec` y `$implement`. En Claude Code se invocan con `/`, por ejemplo `/to-spec`. Tienen la invocación autónoma del modelo desactivada para evitar ejecuciones accidentales.
 2. **Model-invoked (Reactivas / Autónomas):** Habilidades que el agente activa de forma autónoma según las necesidades técnicas de la tarea (por ejemplo: diseño de APIs, TDD, simplificación de código, análisis de seguridad, resolución de conflictos de git). También pueden ser invocadas explícitamente por el usuario si se desea forzar su uso.
 
 ---
@@ -152,7 +152,7 @@ Las habilidades se clasifican según su forma de ejecución:
 
 ### Enrutador Principal
 
-- **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: El mapa oficial del ciclo de desarrollo Sentina. Si tienes dudas sobre qué habilidad o paso sigue, ejecuta `$ask-sentina` en Codex para recibir la ruta exacta.
+- **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: El mapa oficial del ciclo de desarrollo Sentina. Es reactivo: el agente lo consulta solo cuando no está claro qué sigue, y también puedes pedirlo explícitamente con `$ask-sentina` en Codex.
 
 ---
 
@@ -160,8 +160,6 @@ Las habilidades se clasifican según su forma de ejecución:
 
 Habilidades de proceso guiado, ejecutadas por el desarrollador mediante comando:
 
-- **[setup-sentina](./skills/engineering/setup-sentina/SKILL.md)**: Scaffolding de un repo Sentina recién clonado: confirma su perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. En un repo personal solo registra su base de tareas. Ejecútalo una sola vez antes del primer flujo de ingeniería.
-- **[ask-sentina](./skills/engineering/ask-sentina/SKILL.md)**: Enrutador y orquestador del flujo de trabajo de desarrollo en repositorios Sentina.
 - **[to-spec](./skills/engineering/to-spec/SKILL.md)**: Transforma acuerdos o minutas de reunión en especificaciones técnicas atómicas con frontmatter de grafo completo, aristas y validación de invariantes.
 - **[implement](./skills/engineering/implement/SKILL.md)**: Conduce la implementación técnica en la rama `feat/tarea-*` con pruebas locales, evidencia obligatoria y apego al esquema del vault.
 - **[acceptance-test](./skills/engineering/acceptance-test/SKILL.md)**: Genera el documento de pruebas de aceptación a partir de los criterios del spec y bloquea el PR hasta que un humano lo complete contra el sistema real.
@@ -177,6 +175,7 @@ Habilidades de proceso guiado, ejecutadas por el desarrollador mediante comando:
 
 Habilidades técnicas reactivas que el agente invoca de manera autónoma o que puedes solicitar expresamente:
 
+- **[setup-sentina](./skills/engineering/setup-sentina/SKILL.md)**: Bootstrap de `.sentina/`: en un repo Sentina recién clonado confirma su perfil, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`; en un repo genérico, ofrece únicamente conectar sus tareas a una base de Notion sin crear el vault.
 - **[security-and-hardening](./skills/engineering/security-and-hardening/SKILL.md)**: Protección contra vulnerabilidades OWASP, modelado de amenazas, gestión estricta de secretos y anonimización obligatoria de datos personales.
 - **[code-simplification](./skills/engineering/code-simplification/SKILL.md)**: Simplificación de código y refactorización orientada a la claridad, reduciendo deuda técnica sin alterar comportamiento externo.
 - **[deprecation-and-migration](./skills/engineering/deprecation-and-migration/SKILL.md)**: Retiro controlado de sistemas y migraciones seguras mediante el patrón *expand/contract*, alineado con la bi-temporalidad del grafo.

@@ -8,13 +8,15 @@ A skill in this repo runs in one of three kinds of target repo: a real Sentina p
 
 Check once per session (a repo doesn't change mode mid-session), and never ask the user which mode they're in: the file check, plus reading `repo.tipo` when the file exists, is the whole mechanism.
 
+## A Generic-mode opt-in: `.sentina/notion-tasks.yaml`
+
+A generic-mode repo (no `.sentina/manifiesto.yaml` at all) can still track its tasks in Notion without becoming Sentina mode or Personal mode: `setup-sentina` can write `.sentina/notion-tasks.yaml` (just `notion.tareas: <db-id>`) for an ordinary project whose backlog lives in Notion but has no vault. This is not a fourth mode and never gates any skill's Sentina-mode or Personal-mode branch, ever: only `ask-sentina`'s generic path reads it, to know where to pull and update tasks. A repo with only this file still has no vault, no `evidencia/` schema, and no GHL rules, exactly like any other generic-mode repo.
+
+Don't confuse this with Personal mode above: Personal mode is a vault with no Notion; this file is the opposite, Notion with no vault. A skill that branches on `.sentina/manifiesto.yaml` presence or `repo.tipo` must never treat `.sentina/notion-tasks.yaml` as equivalent to either.
+
 ## Two patterns, matched to how a skill is reached
 
-- **Model-invoked skills that auto-fire regardless of what the user typed** (`domain-modeling`, `git-workflow-and-versioning`, `code-review`, `security-and-hardening`) branch in place: Sentina-mode behavior stays exactly as documented, and generic and personal mode get a real fallback to plain SDLC practice, not a refusal. In personal mode, anything the fallback would write as project knowledge follows the repo's own `AGENTS.md` instead.
-- **User-invoked skills whose entire value is Sentina infrastructure with no generic equivalent** (`grill-me`, `to-spec`, `implement`, `acceptance-test`) stop and redirect in both generic and personal mode: tell the user this skill assumes a Sentina product repo, and point at `ask-sentina`'s generic path. This mirrors the stop-and-explain pattern `setup-sentina` already uses when it can't find `scaffold.py`.
+- **Model-invoked skills that auto-fire regardless of what the user typed** (`domain-modeling`, `git-workflow-and-versioning`, `code-review`, `security-and-hardening`, `ask-sentina`, `setup-sentina`) branch in place: Sentina-mode behavior stays exactly as documented, and generic and personal mode get a real fallback to plain SDLC practice, not a refusal. In personal mode, anything the fallback would write as project knowledge follows the repo's own `AGENTS.md` instead.
+- **User-invoked skills whose entire value is Sentina infrastructure with no generic equivalent** (`grill-me`, `to-spec`, `implement`, `acceptance-test`) stop and redirect in both generic and personal mode: tell the user this skill assumes a Sentina product repo, and point at `ask-sentina`'s generic path.
 
-`setup-sentina` never scaffolds or re-profiles a personal repo, since that would pull it into the delivery lifecycle. In personal mode it only records the task database in the manifest's `notion` block.
-
-## Task routing
-
-Where tasks go is decided per repo, by the manifest, never by classifying a task. `notion.tareas` (or `notion.tareas_<entorno_activo>`) names the database in both modes: Sentina repos record an ID, personal repos record a name (`"<Parent page>/<Database>"`) so no Notion ID enters git. `notion.proyecto` optionally names the canonical project ID new tasks link to, and `notion.estados` maps the status property and its `inicial`, `en_curso`, and `completada` values. `/to-tickets` holds the full resolution rules.
+`setup-sentina` is itself the branch, across three cases: `.sentina/manifiesto.yaml` present with `repo.tipo: personal` means stop, it's already profiled as a personal vault, and re-profiling it as a product repo would pull it into the delivery lifecycle. Present with any other `repo.tipo` means offer to review or update the existing Sentina product profile. Absent means check `scaffold.py`: present means a genuine Sentina clone, run the full scaffold; absent means a generic repo, where it only ever offers the lightweight `.sentina/notion-tasks.yaml` opt-in above, never the vault. Being model-invoked, the agent may call it proactively when a repo has neither `.sentina/manifiesto.yaml` nor `.sentina/notion-tasks.yaml` yet, but should offer it once, not re-ask on every turn once the user has answered.
