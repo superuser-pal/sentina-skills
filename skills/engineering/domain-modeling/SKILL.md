@@ -1,6 +1,6 @@
 ---
 name: domain-modeling
-description: Construye y afila el modelo de dominio y glosario del repositorio (contexto/glosario.md en repos Sentina, CONTEXT.md en proyectos genéricos). Se usa al discutir terminología o registrar decisiones de arquitectura notables.
+description: Construye y afila el modelo de dominio y glosario del repositorio (wiki/context/glossary.md en repos Sentina, CONTEXT.md en proyectos genéricos). Se usa al discutir terminología o registrar decisiones de arquitectura notables.
 ---
 
 # Domain Modeling (Modelado de Dominio)
@@ -13,7 +13,7 @@ Construye y afila activamente el modelo de dominio y la terminología del proyec
 
 Confirma si existe `.sentina/manifiesto.yaml` en la raíz del repo y, si existe, lee su `repo.tipo` (ver `.agents/sentina-mode.md`):
 
-- **Presente, `repo.tipo` distinto de `personal` (modo Sentina):** el dominio vive en el grafo de conocimiento bajo `contexto/`, como se describe abajo.
+- **Presente, `repo.tipo` distinto de `personal` (modo Sentina):** el dominio vive en el grafo de conocimiento bajo `wiki/context/`, como se describe abajo.
 - **Presente, `repo.tipo: personal` (modo personal):** el repo tiene vault propio, pero no ciclo de entrega Sentina. El `AGENTS.md` del repo es la única autoridad sobre dónde vive el glosario, en qué idioma se escribe y cómo se registran las decisiones; síguelo y no crees un `CONTEXT.md` paralelo.
 - **Ausente (modo genérico):** no hay vault. El dominio vive en el `CONTEXT.md` de la raíz del repo (créalo si no existe): un glosario plano, sin frontmatter ni grafo. Las decisiones arquitectónicas notables e irreversibles se registran como entradas fechadas dentro del mismo `CONTEXT.md`, no como nodos separados.
 
@@ -25,10 +25,10 @@ En el ecosistema Sentina, el dominio y las decisiones se modelan dentro del graf
 
 ```
 /
-├── contexto/
-│   ├── glosario.md                   ← Vocabulario controlado (id: glosario:*)
-│   ├── arquitectura.md               ← Arquitectura y sistemas (id: arq:*)
-│   ├── alcance.md                    ← Alcance del producto o sistema
+├── wiki/context/
+│   ├── glossary.md                   ← Vocabulario controlado (id: glosario:*)
+│   ├── architecture.md               ← Arquitectura y sistemas (id: arq:*)
+│   ├── scope.md                    ← Alcance del producto o sistema
 │   └── decisiones/                   ← Decisiones arquitectónicas bi-temporales
 │       ├── dec-001-modelo-eventos.md ← id: dec:001-modelo-eventos
 │       └── dec-002-migrar-ghl.md
@@ -56,7 +56,7 @@ Sin vault, el dominio vive en un único archivo, el `CONTEXT.md` de la raíz:
 ## Durante la Sesión
 
 ### 1. Desafiar contra el glosario
-Cuando el usuario o el agente use un término que entre en conflicto con el glosario (`contexto/glosario.md` en modo Sentina, `CONTEXT.md` en modo genérico), señálalo de inmediato: *"El glosario define 'contacto' como X, pero aquí parece utilizarse como 'lead cualificado'. ¿Cuál es la distinción precisa?"*
+Cuando el usuario o el agente use un término que entre en conflicto con el glosario (`wiki/context/glossary.md` en modo Sentina, `CONTEXT.md` en modo genérico), señálalo de inmediato: *"El glosario define 'contacto' como X, pero aquí parece utilizarse como 'lead cualificado'. ¿Cuál es la distinción precisa?"*
 
 ### 2. Afilar lenguaje ambiguo
 Cuando se usen términos sobrecargados, propón un término canónico exacto. Evita sinónimos o polisemia en conceptos nucleares del negocio.
@@ -65,13 +65,13 @@ Cuando se usen términos sobrecargados, propón un término canónico exacto. Ev
 Prueba los límites de los conceptos con escenarios reales y casos extremos. No aceptes abstracciones vagas sin validar cómo interactúan con las bases de datos y flujos de automatización.
 
 ### 4. Contrastar con el código y esquemas
-Verifica si el código real y los esquemas concuerdan con la terminología descrita: en modo Sentina, `bases/`, `esquema/etiquetas.md`, `webhooks/`; en modo genérico, los tipos y esquemas propios del proyecto. Si hay discrepancia, resuélvela antes de avanzar.
+Verifica si el código real y los esquemas concuerdan con la terminología descrita: en modo Sentina, `wiki/bases/`, `wiki/schema/etiquetas.md`, `wiki/webhooks/`; en modo genérico, los tipos y esquemas propios del proyecto. Si hay discrepancia, resuélvela antes de avanzar.
 
 ### 5. Actualizar el glosario inline
-Cuando se acuerde un término nuevo o se clarifique uno existente, actualiza el glosario inmediatamente (`contexto/glosario.md` en modo Sentina, `CONTEXT.md` en modo genérico). Mantén el glosario libre de detalles efímeros de implementación; es un vocabulario semántico del dominio.
+Cuando se acuerde un término nuevo o se clarifique uno existente, actualiza el glosario inmediatamente (`wiki/context/glossary.md` en modo Sentina, `CONTEXT.md` en modo genérico). Mantén el glosario libre de detalles efímeros de implementación; es un vocabulario semántico del dominio.
 
 ### 6. Registrar Decisiones Arquitectónicas
-Crea un nuevo registro de decisión (`contexto/decisiones/dec-<slug>.md` en modo Sentina, una entrada fechada en `CONTEXT.md` en modo genérico) únicamente cuando la decisión cumpla:
+Crea un nuevo registro de decisión (`wiki/context/decisions/dec-<slug>.md` en modo Sentina, una entrada fechada en `CONTEXT.md` en modo genérico) únicamente cuando la decisión cumpla:
 1. **Difícil de revertir:** el costo de cambiar de opinión más adelante es significativo.
 2. **Impacto estructural:** altera cómo se estructuran bases, flujos, contratos o responsabilidades.
 3. **No obvia:** existían alternativas reales y hubo que sopesar compensaciones (trade-offs).

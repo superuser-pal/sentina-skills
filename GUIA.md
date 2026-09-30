@@ -12,7 +12,7 @@ En Sentina no creemos en el *"vibe coding"* ni en dejar que la inteligencia arti
 2. **Las tablas anti-racionalización de Addy Osmani:** Reglas estrictas e inflexibles que bloquean los atajos cognitivos típicos de los modelos de lenguaje (como inventar excusas para saltarse pruebas, no documentar decisiones o comitear datos de clientes).
 
 ### La Raíz del Repo como Vault de Obsidian
-Todos los repositorios Sentina (`sentina-notion`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`) operan como un **Vault nativo de Obsidian**. El conocimiento técnico vive en carpetas puras (`contexto/`, `bases/`, `esquema/`, `flujos/`, `producto/`) mediante archivos Markdown con encabezados estandarizados (`id: tipo:slug`, `valid_from`, `relationships`). 
+En todos los repositorios Sentina (`sentina-brain`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`) la carpeta `wiki/` es un **Vault nativo de Obsidian**; la raíz queda para código, `inbox/`, `reports/`, `ops/` y `tasks/`. El conocimiento técnico vive en carpetas puras (`wiki/context/`, `wiki/bases/`, `wiki/schema/`, `wiki/flows/`, `wiki/products/`) mediante archivos Markdown con encabezados estandarizados (`id: tipo:slug`, `valid_from`, `relationships`). 
 
 Las habilidades aquí reunidas están diseñadas para interactuar directamente con ese grafo de conocimiento, respetando la **bi-temporalidad** (los hechos obsoletos no se borran; se superan formalmente) y la soberanía de cada repositorio.
 
@@ -47,7 +47,7 @@ Antes de tocar una sola línea de código, invoca:
 ```text
 $grill-me
 ```
-- **Qué hace:** El agente lee obligatoriamente `.sentina/manifiesto.yaml`, `contexto/`, `bases/`, `esquema/` y las relaciones existentes.
+- **Qué hace:** El agente lee obligatoriamente `.sentina/manifiesto.yaml`, `wiki/context/`, `wiki/bases/`, `wiki/schema/` y las relaciones existentes.
 - **Cómo actúa:** Inicia una entrevista por rondas. El agente busca hechos en el repo por su cuenta y te presenta únicamente las decisiones abiertas, cada una con su respuesta sugerida (`➡️`). Cuestiona supuestos tácitos, dependencias ocultas y riesgos de seguridad.
 
 ### Paso 4: De Minuta a Spec Atómico (`$to-spec` en Codex)
@@ -70,7 +70,7 @@ Con el spec aprobado por ti, lanza:
 $implement
 ```
 - **Qué hace:** Trabaja dentro de la rama `feat/tarea-*` apegándose al spec. Conduce la implementación mediante pruebas test-first ([`tdd`](./skills/engineering/tdd/SKILL.md)) y ejecuta validaciones locales (`python3 .github/scripts/guardian.py` y tests de la suite).
-- Si tu cambio interactúa con sistemas externos (APIs, CRM, Notion, webhooks) o altera contratos, se genera obligatoriamente el archivo `evidencia/<id>/meta.yaml` con el schema fijo de §9: `id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`; acompañado del log o artefacto técnico reproducible. **La evidencia se comitea en la rama antes de abrir el Pull Request.**
+- Si tu cambio interactúa con sistemas externos (APIs, CRM, Notion, webhooks) o altera contratos, se genera obligatoriamente el archivo `tasks/<id>/meta.yaml` con el schema fijo de §9: `id`, `fecha`, `autor`, `tipo`, `sistema`, `afirmacion`, `resultado`, `tarea_notion`, `artefactos`, `decision_relacionada`; acompañado del log o artefacto técnico reproducible. **La evidencia se comitea en la rama antes de abrir el Pull Request.**
 - Tras escribir o superar nodos del grafo, sincroniza `index.md`, `log.md` y `hot.md` del vault (§13.3), y añade la entrada correspondiente a `CHANGELOG.md` cuando el cambio sea visible para el usuario final.
 
 ### Paso 6: Revisión Multi-Eje (`$code-review` en Codex)
@@ -81,7 +81,7 @@ Puerta manual y obligatoria antes del PR:
 ```text
 $acceptance-test
 ```
-- **Qué hace:** Genera `evidencia/<id>/acceptance-tests.md` a partir de los criterios de aceptación del spec, con los prompts o entradas literales para disparar cada flujo contra el sistema real.
+- **Qué hace:** Genera `tasks/<id>/acceptance-tests.md` a partir de los criterios de aceptación del spec, con los prompts o entradas literales para disparar cada flujo contra el sistema real.
 - **Qué haces tú:** Corres cada caso contra el sistema real en funcionamiento (no simulado) y registras lo observado. Sin este documento completo y sin defectos abiertos, no se abre el Pull Request (§14.2, tabla de evidencia).
 
 ### Paso 8: Pull Request y Sincronización Outbound
@@ -97,27 +97,27 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 ### 1. Protección del Grafo
 | Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
 |---|---|---|
-| *"Es solo un cambio menor de configuración o copy, no requiere tocar `contexto/`"* | Todo cambio de comportamiento o arquitectura altera el estado de verdad del sistema | Crear `contexto/decisiones/dec-<slug>.md` con su `id: dec:<slug>`, declarar `valid_from` y actualizar `relationships` en los nodos afectados. |
+| *"Es solo un cambio menor de configuración o copy, no requiere tocar `wiki/context/`"* | Todo cambio de comportamiento o arquitectura altera el estado de verdad del sistema | Crear `wiki/context/decisions/dec-<slug>.md` con su `id: dec:<slug>`, declarar `valid_from` y actualizar `relationships` en los nodos afectados. |
 | *"Sobrescribo la decisión anterior directamente porque la nueva la reemplaza"* | Los hechos se superan, no se destruyen (bi-temporalidad) | En el nodo previo: `lifecycle: archived`, `valid_until: <fecha>`, `superseded_by: "[[dec-nuevo]]"`. En el nuevo: `relationships: [{type: replaces, target: "[[dec-previo]]"}]`. |
 
 ### 2. Prevención de Bucles en CRM (GHL)
 | Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
 |---|---|---|
-| *"Solo necesitamos etiquetar el contacto al dispararse la automatización"* | Una etiqueta sin salida documentada es un bucle permanente y atrapa contactos | Si el cambio toca `sentina-ghl`, **prohibido generar código, JSON o YAML sin haber documentado la columna 'Quién la quita' en `esquema/etiquetas.md`**. |
+| *"Solo necesitamos etiquetar el contacto al dispararse la automatización"* | Una etiqueta sin salida documentada es un bucle permanente y atrapa contactos | Si el cambio toca `sentina-ghl`, **prohibido generar código, JSON o YAML sin haber documentado la columna 'Quién la quita' en `wiki/schema/etiquetas.md`**. |
 | *"Luego agregamos la condición de salida cuando probemos el flujo en vivo"* | La seguridad de esquemas es previa a la ejecución | Exigir en `to-spec` y validar en `implement` que toda etiqueta referenciada tenga sus 5 columnas completas (§6.1). |
 
 ### 3. Seguridad, Privacidad y Secretos
 | Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
 |---|---|---|
-| *"Pongo la URL completa del webhook en el JSON de prueba para validar que funcione"* | Una URL de webhook entrante **es** una credencial ejecutable (§6.2, §8.3) | **Jamás escribir URLs reales de webhook en archivos JSON o de configuración.** Usar siempre la variable de entorno y registrarla en `webhooks/endpoints.md`. |
+| *"Pongo la URL completa del webhook en el JSON de prueba para validar que funcione"* | Una URL de webhook entrante **es** una credencial ejecutable (§6.2, §8.3) | **Jamás escribir URLs reales de webhook en archivos JSON o de configuración.** Usar siempre la variable de entorno y registrarla en `wiki/webhooks/endpoints.md`. |
 | *"Uso un payload de cliente real como ejemplo porque es más realista"* | Cero datos de cliente en repositorios Git (§8.1) | Anonimizar estrictamente todo nombre, correo, teléfono, identificador y monto antes de guardarlo en el repositorio. |
 
 ### 4. Regla de Evidencia Obligatoria
 | Excusa habitual del agente | Invariante Sentina | Acción obligatoria |
 |---|---|---|
-| *"El cambio fue una llamada API que dio 200, no hace falta guardar evidencia formal"* | Si no hay evidencia reproducible, el hecho no existe técnicamente | Todo PR que toque o interactúe con sistemas externos (Notion, GHL, webhooks, APIs) **requiere forzosamente poblar `evidencia/<id>/meta.yaml` y su correspondiente artefacto o log**. |
+| *"El cambio fue una llamada API que dio 200, no hace falta guardar evidencia formal"* | Si no hay evidencia reproducible, el hecho no existe técnicamente | Todo PR que toque o interactúe con sistemas externos (Notion, GHL, webhooks, APIs) **requiere forzosamente poblar `tasks/<id>/meta.yaml` y su correspondiente artefacto o log**. |
 | *"La evidencia se puede subir en un commit posterior tras el merge"* | El merge en `main` dispara el workflow automático a Notion | La evidencia debe estar commiteada en la rama antes de abrir el PR para que el CI la publique al fusionar. |
-| *"Los tests automatizados ya pasaron, no hace falta que alguien lo pruebe a mano"* | Un test automatizado prueba lo que el código cree que hace; solo un humano ejecutando el flujo real contra el sistema en vivo confirma que hace lo que el negocio pidió | Todo PR requiere `evidencia/<id>/acceptance-tests.md` completo (generado por `/acceptance-test`), con la sección "Observations" llena en cada caso y sin defectos abiertos, antes de abrir el Pull Request. |
+| *"Los tests automatizados ya pasaron, no hace falta que alguien lo pruebe a mano"* | Un test automatizado prueba lo que el código cree que hace; solo un humano ejecutando el flujo real contra el sistema en vivo confirma que hace lo que el negocio pidió | Todo PR requiere `tasks/<id>/acceptance-tests.md` completo (generado por `/acceptance-test`), con la sección "Observations" llena en cada caso y sin defectos abiertos, antes de abrir el Pull Request. |
 
 ---
 
@@ -156,7 +156,7 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 * [`git-workflow-and-versioning`](./skills/engineering/git-workflow-and-versioning/SKILL.md): Estructura commits atómicos, ramas cortas (`feat/tarea-*`) y buenas prácticas de control de versiones.
 * [`tdd`](./skills/engineering/tdd/SKILL.md): Bucle estricto de desarrollo guiado por pruebas (rojo-verde-refactor) a través de costuras bien definidas.
 * [`code-review`](./skills/engineering/code-review/SKILL.md): Audita el diff antes de un PR contrastando con los estándares de Sentina (cero PII, esquemas de etiquetas, evidencias) y el spec.
-* [`domain-modeling`](./skills/engineering/domain-modeling/SKILL.md): Modela el vocabulario del negocio actualizando `contexto/glosario.md` (`id: glosario:*`) y registrando decisiones bi-temporales en `contexto/decisiones/`.
+* [`domain-modeling`](./skills/engineering/domain-modeling/SKILL.md): Modela el vocabulario del negocio actualizando `wiki/context/glossary.md` (`id: glosario:*`) y registrando decisiones bi-temporales en `wiki/context/decisions/`.
 * [`codebase-design`](./skills/engineering/codebase-design/SKILL.md): Principios para construir módulos profundos: interfaces pequeñas, costuras limpias y mucho comportamiento interno.
 * [`diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md): Bucle metódico para bugs difíciles: obliga a crear una prueba que falle reproduciblemente antes de teorizar soluciones.
 * [`prototype`](./skills/engineering/prototype/SKILL.md): Crea código desechable en ramas `prototype/<nombre>` para responder dudas de diseño que no se pueden resolver en papel.
@@ -218,5 +218,5 @@ En Codex, ejecuta `/skills` para abrir el selector y escribe `$nombre-del-skill`
 ## 6. Tres Consejos de Oro para Desarrollar en Sentina
 
 1. **Nunca dejes que el agente empiece a programar sin un spec:** En Codex, pasa siempre por `$grill-me` y `$to-spec`. Diez minutos de preguntas previas ahorran horas de refactorizaciones.
-2. **Exige la evidencia en la rama:** El merge en `main` dispara la publicación automática hacia Notion. Si la evidencia no está en `evidencia/<id>/meta.yaml` antes de abrir el PR, el workflow no tendrá nada que reportar.
+2. **Exige la evidencia en la rama:** El merge en `main` dispara la publicación automática hacia Notion. Si la evidencia no está en `tasks/<id>/meta.yaml` antes de abrir el PR, el workflow no tendrá nada que reportar.
 3. **Consulta al enrutador cuando tengas dudas:** el agente suele traer `ask-sentina` solo, pero también puedes escribir `$ask-sentina` en Codex y dejar que el sistema te indique qué habilidad te conviene ejecutar a continuación.

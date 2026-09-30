@@ -22,7 +22,7 @@ The map is a single issue on this repo's issue tracker, labelled `wayfinder:map`
 
 The map is an **index**, not a store. It lists the decisions made and points at the tickets that hold their detail; a decision lives in exactly one place, its ticket, so the map never restates it, only gists it and links.
 
-**Where the map, its child tickets, blocking, and frontier queries physically live is tracker-specific.** In Sentina repositories, decisions can be recorded as local markdown in `contexto/decisiones/dec-<slug>.md` or tracked locally. If no tracker has been provided, default to the local-markdown tracker.
+**Where the map, its child tickets, blocking, and frontier queries physically live is tracker-specific.** In Sentina repositories, decisions can be recorded as local markdown in `wiki/context/decisions/dec-<slug>.md` or tracked locally. If no tracker has been provided, default to the local-markdown tracker.
 
 ### The map body
 

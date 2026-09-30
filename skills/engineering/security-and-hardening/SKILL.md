@@ -379,13 +379,13 @@ git diff --cached | grep -i "password\|secret\|api_key\|token"
 
 **In a Sentina product repo** (`.sentina/manifiesto.yaml` present at the repo root with `repo.tipo` other than `personal`, see `.agents/sentina-mode.md`), "secret" is broader than API keys and tokens. Skip this subsection, and every other `(Sentina)`-tagged item in this file, entirely outside a Sentina product repo (a personal-profile repo's own `AGENTS.md` sets its privacy boundary). Also treat these as credentials that must never be committed, even in test JSON, example payloads, or `.sentina/manifiesto.yaml` (which lists secret *names* only, never values):
 
-- **Inbound webhook URLs** (GHL, n8n, Make): the URL itself is the trigger key. Reference it only via an environment variable name, registered in `webhooks/endpoints.md`, never the literal URL.
+- **Inbound webhook URLs** (GHL, n8n, Make): the URL itself is the trigger key. Reference it only via an environment variable name, registered in `wiki/webhooks/endpoints.md`, never the literal URL.
 - **Notion database/page IDs**, when the integration sharing that base is not public.
 - **Unrestricted Loom or Drive links.**
 - **Session or user IDs inside example payloads.**
 - Any tag in `_meta/taxonomy.md` under `visibility/pii` is a signal the field must not appear in a committed example, anonymize it first (§8.1).
 
-Cross-check `metodo/estandares/secretos.md` (in `sentina-notion`) for the authoritative list before assuming something is safe to write down.
+Cross-check `wiki/methods/estandares/secretos.md` (in `sentina-notion`) for the authoritative list before assuming something is safe to write down.
 
 ## Data Privacy & Compliance
 

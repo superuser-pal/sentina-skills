@@ -22,18 +22,18 @@ Look at the current repo before assuming anything:
 - `git remote -v`: does the remote name match one of the four Sentina repo shapes (`sentina-notion`, `sentina-web`, `sentina-ghl`, `sentina-<cliente>`)?
 - `.sentina/manifiesto.yaml`: does it already exist? If it declares `repo.tipo: personal`, stop: this is a personal-profile vault, not a product repo, and must not be re-profiled or connected to the delivery lifecycle. Otherwise the repo is already profiled: skip to step 6 and offer to review/update it instead of scaffolding from scratch.
 - `.sentina/notion-tasks.yaml`: does it already exist? If so, this generic repo already opted into Notion task tracking: skip to step 6a and offer to review/update it instead.
-- `scaffold.py` at the repo root: does it exist?
-- `contexto/`, `bases/`, `esquema/`, `producto/`: which of these already exist, and do they look populated or empty?
+- The scaffold: `.github/scripts/scaffold.py` (v3 layout), or `scaffold.py` at the repo root in a clone older than v3. Does either exist?
+- `wiki/context/`, `wiki/bases/`, `wiki/schema/`, `wiki/products/`: which of these already exist, and do they look populated or empty?
 - `CLAUDE.md` / `AGENTS.md`: does either already reference the Sentina skill set?
 
 ### 2. Branch on repo kind
 
-- `scaffold.py` exists at the repo root: this is a Sentina template clone. Continue to step 3.
-- `scaffold.py` doesn't exist: this is a generic repo, not a Sentina clone. Skip straight to step 6a. Don't run `scaffold.py` or create `contexto/`, `bases/`, `esquema/`, `producto/` here: this repo has no vault, and inventing one it didn't ask for would be scaffolding infrastructure nothing else in the repo uses.
+- A scaffold exists: this is a Sentina template clone. Continue to step 3.
+- No scaffold exists: this is a generic repo, not a Sentina clone. Skip straight to step 6a. Don't run `scaffold.py` or create `wiki/context/`, `wiki/bases/`, `wiki/schema/`, `wiki/products/` here: this repo has no vault, and inventing one it didn't ask for would be scaffolding infrastructure nothing else in the repo uses.
 
 ### 3. Present findings and confirm the profile
 
-Summarize what's present and missing. Recommend a `repo.tipo` from the remote name (`sentina-notion` → `notion`, `sentina-web` → `web`, `sentina-ghl` → `ghl`, anything else → `cliente`), and confirm with the user before proceeding, one question at a time:
+Summarize what's present and missing. Recommend a `repo.tipo` from the remote name (`sentina-brain` → `brain`, `sentina-web` → `web`, `sentina-ghl` → `ghl`, anything else → `cliente`), and confirm with the user before proceeding, one question at a time:
 
 - **Profile.** State the recommended `--tipo` and ask for confirmation, or a correction.
 - **Client details (only if `--tipo cliente`).** Ask for `--id <slug>`, `--nombre "<Nombre>"`, and one or two `--producto` values (`chatbot`, `agente-ia`, `automatizacion`, `workspace`).
@@ -43,7 +43,8 @@ Summarize what's present and missing. Recommend a `repo.tipo` from the remote na
 Show the exact command before running it:
 
 ```bash
-python3 scaffold.py --tipo <profile> [--id <slug> --nombre "<Nombre>" --producto <modulo> [--producto <modulo2>]]
+python3 .github/scripts/scaffold.py --tipo <profile> [--id <slug> --nombre "<Nombre>" --producto <modulo> [--producto <modulo2>]]
+# clon anterior al layout v3: python3 scaffold.py --tipo …
 ```
 
 Explain what it does: writes `.env`, discriminates the manifest, creates categories and modules, re-identifies seed nodes, resets the vault's accounting, and runs the guardian. It refuses to run on an already-profiled repo or over modified seed nodes, so it's safe to offer even when unsure; it fails loudly instead of corrupting state.
@@ -83,7 +84,7 @@ Ask the user directly: does this repo's backlog live in a Notion database, or is
     tareas: <db-id-or-url>
   ```
 
-  Keep this file separate from `.sentina/manifiesto.yaml` on purpose: its presence only tells `ask-sentina`'s generic path where to pull and update tasks. It must never be mistaken for the Sentina-mode or Personal-mode signal in `.agents/sentina-mode.md`, and it must never trigger vault-only behavior (`contexto/`, `evidencia/`, GHL tag rules) in any other skill. This repo still has no vault after writing it. It's also not the same thing as Personal mode: Personal mode is a vault with no Notion; this is Notion with no vault.
+  Keep this file separate from `.sentina/manifiesto.yaml` on purpose: its presence only tells `ask-sentina`'s generic path where to pull and update tasks. It must never be mistaken for the Sentina-mode or Personal-mode signal in `.agents/sentina-mode.md`, and it must never trigger vault-only behavior (`wiki/context/`, `tasks/`, GHL tag rules) in any other skill. This repo still has no vault after writing it. It's also not the same thing as Personal mode: Personal mode is a vault with no Notion; this is Notion with no vault.
 
 Continue to step 7.
 

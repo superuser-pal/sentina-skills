@@ -7,7 +7,7 @@ description: Diagnosis loop for hard bugs and performance regressions. Use when 
 
 A discipline for hard bugs. Skip phases only when explicitly justified.
 
-When exploring the codebase, read `CONTEXT.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
+When exploring the codebase, read `CONTEXT.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching. In a Sentina or personal repo (`.sentina/manifiesto.yaml` exists), the glossary is `wiki/context/glossary.md` and decisions are `wiki/context/decisions/dec-<slug>.md`: read and write those, never a parallel `CONTEXT.md` or `docs/adr/` (`.agents/sentina-mode.md` § Output routing).
 
 ## Redact
 

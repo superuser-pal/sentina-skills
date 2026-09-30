@@ -16,7 +16,7 @@ Generate self-contained HTML pages that explain systems, code changes, plans, da
 
 - Prefer an HTML page over terminal ASCII when the output is inherently visual.
 - If a table would have 4+ rows or 3+ columns, render it as HTML and give only a short chat summary.
-- Write files to `~/.agent/diagrams/` or the explicit eval output path. Use descriptive filenames.
+- Write files to `~/.agent/diagrams/` or the explicit eval output path. Use descriptive filenames. In a Sentina or personal repo, a diagram the user wants to keep goes to `reports/` (`.agents/sentina-mode.md` § Output routing), never into the vault.
 - Generate a Markdown companion only when the user explicitly asks for AI-readable output or a source brief. Keep HTML as the final visual output; Markdown is a companion, never the source for HTML. Write `<name>.md` beside `<name>.html` when possible, and ask before replacing an existing companion file.
 - Open generated pages in the browser when running normally. In Pi package installs, use `visual_explainer` with `prepare` for planning/context and `render` only after the complete HTML document exists. MCP hosts use `visual-explainer-mcp`, which defaults render tools to `open: false`. Use `viewer: "glimpse"` only when the user wants a native Glimpse window and `glimpseui` is installed; `viewer: "auto"` may fall back to the browser.
 - The final page must be a complete self-contained HTML document, including embedded CSS, a self-contained favicon, and any needed JS. In Pi, `visual_explainer.render` also adds missing `html lang`, missing viewport metadata, and display-math escaping for raw `<` / `>` inside `$$...$$`.

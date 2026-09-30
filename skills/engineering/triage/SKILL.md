@@ -82,7 +82,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
    - For `wontfix`, close the issue, with the comment depending on *why*:
      - **Already implemented**: the change already exists in the codebase. Point to where it lives; do **not** write to `.out-of-scope/` (that KB is for *rejected* requests, not built ones).
      - **Rejected (bug)**: give a polite explanation, then close.
-     - **Rejected (enhancement)**: write to `.out-of-scope/`, link to it from a comment, then close ([OUT-OF-SCOPE.md](OUT-OF-SCOPE.md)).
+     - **Rejected (enhancement)**: write to `.out-of-scope/`, link to it from a comment, then close ([OUT-OF-SCOPE.md](OUT-OF-SCOPE.md)). In a Sentina or personal repo there is no `.out-of-scope/`: a rejection is a decision, recorded as `wiki/context/decisions/dec-<slug>.md` with the reason (`.agents/sentina-mode.md` § Output routing); search those for prior rejections in step 1 too.
    - `needs-triage`: apply the role. Optional comment if there's partial progress.
 
 ## Quick state override

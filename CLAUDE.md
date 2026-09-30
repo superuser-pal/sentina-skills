@@ -25,7 +25,7 @@ Each bucket folder has a `README.md` that lists every skill in the bucket with a
 
 Every `SKILL.md` is either user-invoked (reachable only by the human) or model-invoked (reachable autonomously by the agent or explicitly by the human). See [.agents/invocation.md](./.agents/invocation.md).
 
-Skills that assume Sentina infrastructure (Notion, the vault, `evidencia/`) must detect that from `.sentina/manifiesto.yaml` rather than assuming it, so the same globally-installed skills also work in a personal project. See [.agents/sentina-mode.md](./.agents/sentina-mode.md).
+Skills that assume Sentina infrastructure (Notion, the vault, `tasks/`) must detect that from `.sentina/manifiesto.yaml` rather than assuming it, so the same globally-installed skills also work in a personal project. See [.agents/sentina-mode.md](./.agents/sentina-mode.md).
 
 [`ask-sentina`](./skills/engineering/ask-sentina/SKILL.md) is the router that maps every user-reachable skill and how they relate to the Sentina development lifecycle. Whenever you add, rename, remove, or change how a skill fits the flow, keep `ask-sentina`'s `SKILL.md` synchronized.
 
