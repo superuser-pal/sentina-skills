@@ -38,7 +38,7 @@ This is the standard path for all development in Sentina repositories (`sentina-
 
 1. **Inbound from Notion:**
    - The task originates in Notion (§11.1).
-   - Create and switch to the isolated working branch: `git checkout -b feat/tarea-<id-or-slug>`.
+   - Create and switch to the isolated working branch: `git checkout -b feat/tarea-<id>-<slug>`, where `<id>` is the Notion page id or the numeric ID (see `.agents/sentina-mode.md`).
 
 2. **Concurrency lock in Notion (§11.1.4):**
    - Before writing a single line of code or spec, update the task's status in Notion to **"En curso"** and explicitly assign the owner (the user or the agent executing it).

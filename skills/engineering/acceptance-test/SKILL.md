@@ -15,7 +15,7 @@ This skill assumes a Sentina product repo: confirm `.sentina/manifiesto.yaml` ex
 ## Process
 
 1. **Locate the spec and the evidence `<id>`:**
-   - Same lookup as `/code-review`: the branch name (`feat/tarea-<id-or-slug>`), a path the user supplies, or the Notion task description.
+   - Same lookup as `/code-review`: the branch name (`feat/tarea-<id>-<slug>`), a path the user supplies, or the Notion task description.
    - Use the same `<id>` `/implement` already used for `tasks/<id>/meta.yaml` on this task. If it isn't obvious (more than one possible `<id>`, or `/implement` hasn't run yet), ask the user instead of guessing.
 
 2. **Read the acceptance criteria:**
