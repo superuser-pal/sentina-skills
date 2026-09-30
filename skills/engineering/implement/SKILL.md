@@ -19,7 +19,7 @@ This skill assumes a Sentina product repo: confirm `.sentina/manifiesto.yaml` ex
 ## Execution Rules
 
 1. **Isolated working branch:**
-   - All work happens on a branch prefixed `feat/tarea-*` (or `fix/tarea-*`), where `tarea-*` corresponds to the task's identifier in Notion.
+   - All work happens on a branch prefixed `feat/tarea-*` (or `fix/tarea-*`), where `tarea-*` is `tarea-<id>-<slug>` and `<id>` is the task's Notion page id or numeric ID (`.agents/sentina-mode.md`).
    - Never commit directly to `main`.
 
 2. **Strict adherence to the specification:**

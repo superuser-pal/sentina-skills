@@ -141,8 +141,8 @@ main (always deployable)
 
 ```
 Sentina (mandatory, §11.1.3):
-feat/tarea-<id-o-slug>         → feat/tarea-migrar-ghl
-fix/tarea-<id-o-slug>          → fix/tarea-duplicate-tasks
+feat/tarea-<id>-<slug>         → feat/tarea-3e8495661e9980468afbdec78769a5b7-migrar-ghl
+fix/tarea-<id>-<slug>          → fix/tarea-42-duplicate-tasks   (bases con ID autonumber)
 
 Generic (non-Sentina projects, or Sentina chores/refactors with no Notion task):
 feature/<short-description>   → feature/task-creation
@@ -156,7 +156,7 @@ refactor/<short-description>  → refactor/auth-module
 For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
 
 ```bash
-# Create a worktree for a feature branch (Sentina: feat/tarea-<id-o-slug>)
+# Create a worktree for a feature branch (Sentina: feat/tarea-<id>-<slug>)
 git worktree add ../project-feature-a feat/tarea-task-creation
 git worktree add ../project-feature-b feat/tarea-user-settings
 

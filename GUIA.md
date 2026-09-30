@@ -36,7 +36,7 @@ Todo ciclo de desarrollo en Sentina sigue un flujo disciplinado de 8 pasos:
 Las tareas se originan en Notion (la interfaz de gestión del negocio, §11.1).
 - Abre tu terminal o agente y crea tu rama de trabajo siguiendo la convención obligatoria:
   ```bash
-  git checkout -b feat/tarea-<id-de-notion>
+  git checkout -b feat/tarea-<id>-<slug>   # <id>: page id de Notion (32 hex) o ID numérico
   ```
 
 ### Paso 2: Bloqueo de Concurrencia en Notion (§11.1.4)

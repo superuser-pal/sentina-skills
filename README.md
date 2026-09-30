@@ -34,9 +34,9 @@ Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de ocho et
 Toda tarea técnica nace en Notion (la interfaz de gestión de negocio, §11.1).
 - Se crea y cambia a la rama de trabajo aislada según la convención obligatoria (§11.1.3):
   ```bash
-  git checkout -b feat/tarea-<id-o-slug>
+  git checkout -b feat/tarea-<id>-<slug>   # <id>: page id de Notion (32 hex) o ID numérico
   # o para correcciones de errores:
-  git checkout -b fix/tarea-<id-o-slug>
+  git checkout -b fix/tarea-<id>-<slug>
   ```
 
 ### 2. Bloqueo de concurrencia en Notion (§11.1.4)
