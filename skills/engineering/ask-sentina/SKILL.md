@@ -45,7 +45,7 @@ This is the standard path for all development in Sentina repositories (`sentina-
    - This lock is mandatory and is the agent's job, not a CI workflow's: it prevents another session or agent from picking up the same task in parallel. If you don't have direct access to the Notion API in this session, ask the user to confirm it before continuing.
 
 3. **Audit and Interrogation with the Vault → `/grill-me`:**
-   - The agent reads the Vault's context (`contexto/`, `bases/`, `esquema/`, `relationships` edges).
+   - The agent reads the Vault's context (`wiki/context/`, `wiki/bases/`, `wiki/schema/`, `relationships` edges).
    - Actively questions requirements, tacit assumptions, hidden dependencies, and security risks through rounds of questions with suggested answers (frontier pattern).
    - No code is written during this phase.
 
@@ -58,7 +58,7 @@ This is the standard path for all development in Sentina repositories (`sentina-
    - Implements the changes on the `feat/tarea-*` branch, rigorously following the spec.
    - Drives development via tests (`/tdd`).
    - Runs local validations (`python3 .github/scripts/guardian.py` and the project's tests).
-   - Generates evidence in `evidencia/<id>/meta.yaml` (full schema §9) and attaches reproducible logs/artifacts.
+   - Generates evidence in `tasks/<id>/meta.yaml` (full schema §9) and attaches reproducible logs/artifacts.
    - Syncs `index.md`, `log.md`, and `hot.md` in the vault after writing or superseding nodes (§13.3), and adds the corresponding entry to `CHANGELOG.md` when the change is visible to the end user.
    - Adheres inflexibly to the 4 Anti-Rationalization Tables.
 
@@ -66,7 +66,7 @@ This is the standard path for all development in Sentina repositories (`sentina-
    - Audits the diff against the specification, architecture standards, total absence of customer PII, and schema compliance.
 
 7. **Live Functional Verification → `/acceptance-test`:**
-   - Mandatory manual gate: a human runs every case from the spec's Test Cases and Acceptance Criteria section (§5) against the real, running system and records what they observe in `evidencia/<id>/acceptance-tests.md`.
+   - Mandatory manual gate: a human runs every case from the spec's Test Cases and Acceptance Criteria section (§5) against the real, running system and records what they observe in `tasks/<id>/acceptance-tests.md`.
    - The PR does not open without this document complete and with no unresolved open defects (Mandatory Evidence Table, manifest §14.2).
 
 8. **Pull Request and Outbound Sync:**
@@ -77,10 +77,10 @@ This is the standard path for all development in Sentina repositories (`sentina-
 
 ## 2. Domain and Architecture Skills
 
-- **Business vocabulary and concepts:** Use `/domain-modeling` to sharpen terms in `contexto/glosario.md` with stable identifiers `id: glosario:<slug>`.
+- **Business vocabulary and concepts:** Use `/domain-modeling` to sharpen terms in `wiki/context/glossary.md` with stable identifiers `id: glosario:<slug>`.
 - **Deep module and interface design:** Use `/codebase-design` to structure modules with small interfaces and clean seams.
 - **API and contract design:** Use `/api-and-interface-design` for REST endpoints, webhooks, or schema contracts between Notion, GHL, and client modules.
-- **Large or foggy initiatives (fog exploration):** Use `/wayfinder` to map complex decisions and record them as bi-temporal nodes in `contexto/decisiones/dec-<slug>.md`.
+- **Large or foggy initiatives (fog exploration):** Use `/wayfinder` to map complex decisions and record them as bi-temporal nodes in `wiki/context/decisions/dec-<slug>.md`.
 - **Throwaway prototypes:** Use `/prototype` to answer design questions on `prototype/<name>` branches.
 
 ---

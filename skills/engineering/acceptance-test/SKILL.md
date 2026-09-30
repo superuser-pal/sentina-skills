@@ -10,19 +10,19 @@ A mandatory manual gate between `/code-review` and opening the Pull Request. Gen
 
 ## Prerequisite
 
-This skill assumes a Sentina product repo: confirm `.sentina/manifiesto.yaml` exists at the repo root and its `repo.tipo` is not `personal` (see `.agents/sentina-mode.md`). If the file is missing, or declares `repo.tipo: personal`, stop: the `evidencia/<id>/` path and the `feat/tarea-<id>` lookup below don't apply. Tell the user to use `ask-sentina` for the generic path instead, a plain manual pass against the acceptance criteria, recorded wherever the project keeps its own notes.
+This skill assumes a Sentina product repo: confirm `.sentina/manifiesto.yaml` exists at the repo root and its `repo.tipo` is not `personal` (see `.agents/sentina-mode.md`). If the file is missing, or declares `repo.tipo: personal`, stop: the `tasks/<id>/` path and the `feat/tarea-<id>` lookup below don't apply. Tell the user to use `ask-sentina` for the generic path instead, a plain manual pass against the acceptance criteria, recorded wherever the project keeps its own notes.
 
 ## Process
 
 1. **Locate the spec and the evidence `<id>`:**
    - Same lookup as `/code-review`: the branch name (`feat/tarea-<id-or-slug>`), a path the user supplies, or the Notion task description.
-   - Use the same `<id>` `/implement` already used for `evidencia/<id>/meta.yaml` on this task. If it isn't obvious (more than one possible `<id>`, or `/implement` hasn't run yet), ask the user instead of guessing.
+   - Use the same `<id>` `/implement` already used for `tasks/<id>/meta.yaml` on this task. If it isn't obvious (more than one possible `<id>`, or `/implement` hasn't run yet), ask the user instead of guessing.
 
 2. **Read the acceptance criteria:**
    - Read the spec's "Test Cases and Acceptance Criteria" section (the `to-spec` template's §5), specifically the "Acceptance Criteria" list.
    - If the spec doesn't declare this section, stop: ask the user for the spec or the criteria before generating anything.
 
-3. **Generate `evidencia/<id>/acceptance-tests.md` (if it doesn't exist yet):**
+3. **Generate `tasks/<id>/acceptance-tests.md` (if it doesn't exist yet):**
    - One case per acceptance criterion, using the fixed template below.
    - Each case includes the literal prompts or inputs needed to trigger the flow end-to-end against the real system (not a mock, not a simulated environment): if the criterion says "the chatbot escalates to a human after 2 failed attempts", the prompts are the literal messages to send, in order.
    - Write the criterion text, prompts, and any example content in the same language the spec itself uses.
@@ -33,12 +33,12 @@ This skill assumes a Sentina product repo: confirm `.sentina/manifiesto.yaml` ex
    - Do not continue to opening the PR in this same invocation: this is a mandatory pause point, not a suggestion.
 
 5. **On resume: validate completeness before letting the flow continue:**
-   - Re-read `evidencia/<id>/acceptance-tests.md`.
+   - Re-read `tasks/<id>/acceptance-tests.md`.
    - If any case has an empty or unchecked "Observations" section, tell the user exactly which one is missing and stop there.
    - If the overall verdict shows observed defects, don't continue: tell the user "There are observed defects in the acceptance test; go back to `/implement` to fix them, then repeat `/acceptance-test`." (An instruction for the human to act on, never a direct call to the `implement` skill: it's user-invoked, see `.agents/invocation.md`.)
    - If every case is complete and the verdict shows everything passed, confirm the document is ready as evidence and that work can continue to opening the Pull Request.
 
-## Template for `evidencia/<id>/acceptance-tests.md`
+## Template for `tasks/<id>/acceptance-tests.md`
 
 ```markdown
 # Acceptance Tests (<id>)

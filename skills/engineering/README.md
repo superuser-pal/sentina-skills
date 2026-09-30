@@ -7,7 +7,7 @@ Skills for daily engineering work in Sentina repositories.
 Reachable only when explicitly invoked by the developer (`disable-model-invocation: true`).
 
 - **[to-spec](./to-spec/SKILL.md)**: Turn a Notion AI minute, conversation, or task into an atomic, formal technical specification with graph IDs and anti-rationalization validation.
-- **[implement](./implement/SKILL.md)**: Disciplined execution on branch `feat/tarea-*` following a spec, with local validation, required evidence in `evidencia/<id>/meta.yaml`, and strict anti-rationalization tables.
+- **[implement](./implement/SKILL.md)**: Disciplined execution on branch `feat/tarea-*` following a spec, with local validation, required evidence in `tasks/<id>/meta.yaml`, and strict anti-rationalization tables.
 - **[acceptance-test](./acceptance-test/SKILL.md)**: Generates the manual acceptance-test document from the spec's criteria and gates the PR on a human completing it against the live system.
 - **[to-tickets](./to-tickets/SKILL.md)**: Break a plan or spec into tracer-bullet slices, each declaring its blocking edges.
 - **[grill-with-docs](./grill-with-docs/SKILL.md)**: Grilling session that builds the project's domain model, sharpening terminology and updating documentation.
@@ -32,7 +32,7 @@ Model- or user-reachable skills that trigger automatically or on request.
 - **[diagnosing-bugs](./diagnosing-bugs/SKILL.md)**: Disciplined diagnosis loop for hard bugs: tight feedback loop, hypothesize, instrument, and regression-test.
 - **[research](./research/SKILL.md)**: Investigate questions against primary sources and capture cited findings as Markdown.
 - **[tdd](./tdd/SKILL.md)**: Test-driven development with a red-green-refactor loop.
-- **[domain-modeling](./domain-modeling/SKILL.md)**: Build and sharpen the domain model, updating `contexto/glosario.md` and bi-temporal decisions in `contexto/decisiones/`.
+- **[domain-modeling](./domain-modeling/SKILL.md)**: Build and sharpen the domain model, updating `wiki/context/glossary.md` and bi-temporal decisions in `wiki/context/decisions/`.
 - **[codebase-design](./codebase-design/SKILL.md)**: Shared discipline for deep modules: small interfaces, clean seams, and high leverage.
 - **[code-review](./code-review/SKILL.md)**: Multi-axis review of diffs against project standards, Sentina invariants, and specs.
 - **[resolving-merge-conflicts](./resolving-merge-conflicts/SKILL.md)**: Resolve git merge/rebase conflicts hunk by hunk by tracing original intent.
