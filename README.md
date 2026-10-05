@@ -20,14 +20,13 @@ En Sentina el desarrollo asistido por IA se rige por tres pilares fundamentales:
 
 **Antes de empezar en un repo Sentina recién clonado:** `setup-sentina` confirma el perfil del repositorio, corre `scaffold.py` y registra la conexión con Notion en `.sentina/manifiesto.yaml`. Es una habilidad reactiva: el agente la ofrece sola al detectar un repo sin `.sentina/` configurado, aunque también puedes pedirla explícitamente con `$setup-sentina`. Si el repo ya está perfilado (el archivo ya existe), el resto de las habilidades de este ciclo asumen esa configuración y no necesitas repetirlo. En un repo genérico (sin `scaffold.py` ni vault), en cambio, ofrece únicamente conectar las tareas a una base de Notion mediante `.sentina/notion-tasks.yaml`, sin crear el vault.
 
-Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de ocho etapas:
+Todo ciclo de desarrollo en el ecosistema sigue un flujo disciplinado de nueve etapas:
 
 ```
-  NOTION         LOCK         GRILL          SPEC           BUILD          REVIEW          VERIFY           SYNC
- ┌──────┐     ┌───────┐     ┌───────┐     ┌────────┐     ┌──────────┐     ┌──────┐     ┌────────────┐     ┌─────┐
- │Task /│ ──▶ │Bloqueo│ ──▶ │$grill-│ ──▶ │$to-spec│ ──▶ │$implement│ ──▶ │$code-│ ──▶ │$acceptance-│ ──▶ │ PR +│
- │Minuta│     │ Notion│     │   me  │     │ (Spec) │     │ (feat/*) │     │review│     │    test    │     │Evid.│
- └──────┘     └───────┘     └───────┘     └────────┘     └──────────┘     └──────┘     └────────────┘     └─────┘
+NOTION → LOCK → GRILL → SPEC → BUILD → REVIEW → VERIFY → PR/SYNC → RETRO
+ task    Notion  grill   to-spec implement  code-review acceptance   pr       retro
+                                  or
+                            implement-spec
 ```
 
 ### 1. Inbound desde Notion y rama aislada
@@ -55,8 +54,8 @@ Sintetiza la sesión de preguntas o la minuta de Notion AI en una especificació
 - Establece costuras de prueba, criterios de aceptación verificables y el plan de evidencia.
 - Valida preventivamente el cumplimiento de las 4 tablas anti-racionalización. El usuario debe aprobar la especificación antes de pasar a la implementación.
 
-### 5. Construcción Disciplinada (`$implement` en Codex)
-El agente ejecuta el trabajo en la rama aislada siguiendo la especificación aprobada:
+### 5. Construcción Disciplinada (`$implement` o `$implement-spec` en Codex)
+El agente ejecuta el trabajo en la rama aislada siguiendo la especificación aprobada. Usa `$implement` para una tarea individual y `$implement-spec` para coordinar en paralelo un grafo de tickets sobre una sola rama de integración:
 - Conduce el desarrollo mediante pruebas ([`tdd`](./skills/engineering/tdd/SKILL.md)).
 - Ejecuta las validaciones locales del proyecto y el guardián del repositorio (`python3 .github/scripts/guardian.py`).
 - Genera obligatoriamente el registro de evidencia en `tasks/<id>/meta.yaml` acompañado de su log o artefacto técnico reproducible (§9).
@@ -69,9 +68,13 @@ Audita el diff completo contra la especificación técnica, los estándares de c
 Puerta manual y obligatoria antes del PR: un humano ejecuta cada caso de la sección "Casos de Prueba y Criterios de Aceptación" del spec contra el sistema real en funcionamiento (no simulado), usando los prompts o entradas literales que la habilidad genera en `tasks/<id>/acceptance-tests.md`, y registra lo observado.
 - Sin este documento completo y sin defectos abiertos, no se abre el Pull Request (§14.2, tabla de evidencia).
 
-### 8. Pull Request y Sincronización Outbound hacia Notion
+### 8. Pull Request y Sincronización Outbound hacia Notion (`$pr`)
 - La evidencia se incluye en el commit dentro de la rama antes de abrir el Pull Request.
+- La habilidad reactiva `$pr` estructura el cuerpo con el resumen visual mínimo, evidencia antes/después y el riesgo del merge.
 - Al fusionar la rama en `main`, los flujos automatizados de GitHub Actions actualizan la tarea en Notion a "Completada" y publican el contexto y la evidencia técnica (§11.2).
+
+### 9. Retrospectiva del Entorno (`$retro`)
+Antes de limpiar el contexto de la sesión, `$retro` propone mejoras a la navegación, verificaciones deterministas, estándares de revisión, archivos de instrucciones, herramientas y acceso a información.
 
 ---
 
@@ -144,7 +147,7 @@ El repositorio cuenta con compatibilidad dual nativa:
 Las habilidades se clasifican según su forma de ejecución:
 
 1. **User-invoked (Manuales):** Herramientas de proceso invocadas directamente por el usuario para guiar fases clave del ciclo de desarrollo. En Codex se mencionan con `$`, por ejemplo `$grill-me`, `$to-spec` y `$implement`. En Claude Code se invocan con `/`, por ejemplo `/to-spec`. Tienen la invocación autónoma del modelo desactivada para evitar ejecuciones accidentales.
-2. **Model-invoked (Reactivas / Autónomas):** Habilidades que el agente activa de forma autónoma según las necesidades técnicas de la tarea (por ejemplo: diseño de APIs, TDD, simplificación de código, análisis de seguridad, resolución de conflictos de git). También pueden ser invocadas explícitamente por el usuario si se desea forzar su uso.
+2. **Model-invoked (Reactivas / Autónomas):** Habilidades que el agente activa de forma autónoma según las necesidades técnicas de la tarea (por ejemplo: diseño de APIs, TDD, simplificación de código, análisis de seguridad y redacción del Pull Request). También pueden ser invocadas explícitamente por el usuario si se desea forzar su uso.
 
 ---
 
@@ -162,12 +165,14 @@ Habilidades de proceso guiado, ejecutadas por el desarrollador mediante comando:
 
 - **[to-spec](./skills/engineering/to-spec/SKILL.md)**: Transforma acuerdos o minutas de reunión en especificaciones técnicas atómicas con frontmatter de grafo completo, aristas y validación de invariantes.
 - **[implement](./skills/engineering/implement/SKILL.md)**: Conduce la implementación técnica en la rama `feat/tarea-*` con pruebas locales, evidencia obligatoria y apego al esquema del vault.
+- **[implement-spec](./skills/engineering/implement-spec/SKILL.md)**: Implementa un grafo completo de tickets sobre una rama de integración, coordinando en paralelo el frente de trabajo disponible y cerrando con revisión, evidencia y aceptación.
 - **[acceptance-test](./skills/engineering/acceptance-test/SKILL.md)**: Genera el documento de pruebas de aceptación a partir de los criterios del spec y bloquea el PR hasta que un humano lo complete contra el sistema real.
 - **[to-tickets](./skills/engineering/to-tickets/SKILL.md)**: Divide un plan grande en rebanadas verticales (*tracer bullets*) independientes con orden de dependencias claro.
 - **[grill-with-docs](./skills/engineering/grill-with-docs/SKILL.md)**: Sesión de interrogatorio que aterriza y sincroniza el modelo de dominio en repositorios con documentación formal.
 - **[triage](./skills/engineering/triage/SKILL.md)**: Clasificación metódica y máquina de estados para el procesamiento de incidencias técnicas.
 - **[improve-codebase-architecture](./skills/engineering/improve-codebase-architecture/SKILL.md)**: Diagnóstico de módulos superficiales y propuesta de reestructuración hacia módulos profundos con interfaces limpias.
 - **[wayfinder](./skills/engineering/wayfinder/SKILL.md)**: Mapeo y navegación estructurada para iniciativas técnicas de alta incertidumbre o alcance difuso.
+- **[retro](./skills/engineering/retro/SKILL.md)**: Revisa una sesión de desarrollo y propone mejoras al entorno del agente, priorizando validaciones deterministas, navegación, estándares y herramientas.
 
 ---
 
@@ -190,7 +195,7 @@ Habilidades técnicas reactivas que el agente invoca de manera autónoma o que p
 - **[domain-modeling](./skills/engineering/domain-modeling/SKILL.md)**: Modelado conceptual del negocio en `wiki/context/glossary.md` con identificadores estables y registro de decisiones en `wiki/context/decisions/`.
 - **[codebase-design](./skills/engineering/codebase-design/SKILL.md)**: Principios de diseño para módulos profundos con interfaces reducidas y alto encapsulamiento interno.
 - **[code-review](./skills/engineering/code-review/SKILL.md)**: Auditoría minuciosa de diffs contra la especificación técnica, lineamientos de arquitectura y ausencia total de credenciales y PII.
-- **[resolving-merge-conflicts](./skills/engineering/resolving-merge-conflicts/SKILL.md)**: Resolución sistemática de conflictos de integración rastreando la intención en el historial de git.
+- **[pr](./skills/engineering/pr/SKILL.md)**: Redacta el cuerpo del Pull Request con un resumen visual mínimo, evidencia antes/después y una evaluación explícita del riesgo de merge.
 - **[wizard](./skills/engineering/wizard/SKILL.md)**: Generación de asistentes interactivos en terminal para procedimientos que requieren intervención humana forzosa.
 
 ---
@@ -204,18 +209,6 @@ Habilidades técnicas reactivas que el agente invoca de manera autónoma o que p
 - **[to-questionnaire](./skills/productivity/to-questionnaire/SKILL.md)**: Creación de cuestionarios asíncronos estructurados para recopilar información clave de usuarios o partes interesadas externas.
 - **[wait-what](./skills/productivity/wait-what/SKILL.md)**: Explicación sencilla y en lenguaje natural cuando un término o decisión del agente resulta confuso.
 - **[writing-for-agents](./skills/productivity/writing-for-agents/SKILL.md)**: Directrices y patrones de redacción de documentos técnicos para optimizar la comprensión por parte de modelos de lenguaje.
-
----
-
-### Habilidades en Evaluación y Auxiliares
-
-- **En Progreso (`skills/in-progress/`):**
-  - **[writing-beats](./skills/in-progress/writing-beats/SKILL.md)**, **[writing-fragments](./skills/in-progress/writing-fragments/SKILL.md)** y **[writing-shape](./skills/in-progress/writing-shape/SKILL.md)**: Herramientas para la redacción y estructuración de textos técnicos complejos.
-  - **[loop-me](./skills/in-progress/loop-me/SKILL.md)**: Ciclos de retroalimentación e iteración continua para refinar especificaciones.
-  - **[retro](./skills/in-progress/retro/SKILL.md)**: Retrospectivas del rendimiento del agente y del entorno de desarrollo para enriquecer las instrucciones base.
-- **Auxiliares (`skills/misc/`):**
-  - **[git-guardrails-claude-code](./skills/misc/git-guardrails-claude-code/SKILL.md)**: Reglas de protección para evitar comandos git potencialmente destructivos en sesiones automatizadas.
-  - **[setup-pre-commit](./skills/misc/setup-pre-commit/SKILL.md)**: Configuración inicial de ganchos de verificación previa al commit para validación de formato y tipos.
 
 ---
 

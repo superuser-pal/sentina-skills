@@ -54,8 +54,10 @@ This is the standard path for all development in Sentina repositories (`sentina-
    - Declares: files to touch, graph nodes to create or supersede with their full frontmatter (`id: dec:<slug>`, `valid_from`, `replaces`, and the rest of the keys required by §3.1), typed edges (`depende_de`), external stubs if applicable, test cases, and the 4 anti-rationalization tables.
    - The user approves the spec before proceeding.
 
-5. **Disciplined, Validated Execution → `/implement`:**
-   - Implements the changes on the `feat/tarea-*` branch, rigorously following the spec.
+5. **Disciplined, Validated Execution → `/implement` or `/implement-spec`:**
+   - Use `/implement` for one approved task or ticket in the current session.
+   - Use `/implement-spec` when `/to-tickets` produced a dependency graph that should be coordinated as one build: it works the ready frontier in parallel worktrees and integrates every ticket on the `feat/tarea-*` branch.
+   - Both paths rigorously follow the spec.
    - Drives development via tests (`/tdd`).
    - Runs local validations (`python3 .github/scripts/guardian.py` and the project's tests).
    - Generates evidence in `tasks/<id>/meta.yaml` (full schema §9) and attaches reproducible logs/artifacts.
@@ -69,9 +71,14 @@ This is the standard path for all development in Sentina repositories (`sentina-
    - Mandatory manual gate: a human runs every case from the spec's Test Cases and Acceptance Criteria section (§5) against the real, running system and records what they observe in `tasks/<id>/acceptance-tests.md`.
    - The PR does not open without this document complete and with no unresolved open defects (Mandatory Evidence Table, manifest §14.2).
 
-8. **Pull Request and Outbound Sync:**
+8. **Pull Request and Outbound Sync → `/pr`:**
    - Commit the evidence on the branch before opening the PR.
+   - Use the model-invoked `/pr` skill to write a compact visual summary, before-and-after evidence, and the merge-danger assessment.
    - On merging to `main`, the GitHub Actions workflows transition the Notion task to "Completada" and publish the context and evidence (§11.2). This outbound part is the workflow's responsibility, unlike the inbound lock in step 2, which is the agent's responsibility.
+
+9. **Environment Retrospective → `/retro`:**
+   - Before clearing the implementation context, use `/retro` to identify improvements to navigation, deterministic checks, review standards, steering files, tooling, or information access.
+   - Mechanical mistakes become automated checks. Judgement calls remain review standards.
 
 ---
 
@@ -98,9 +105,10 @@ This is the standard path for all development in Sentina repositories (`sentina-
 ## 4. Diagnosis and Support
 
 - **Hard bugs or regressions:** Use `/diagnosing-bugs` to isolate a tight feedback loop before theorizing solutions.
-- **Git conflicts:** Use `/resolving-merge-conflicts` to resolve conflict hunks by tracing intent back to primary sources.
+- **After a bug fix:** Use `/retro` in the same session to identify what environmental change could have prevented or shortened the failure. If the missing piece is a testable seam, use `/improve-codebase-architecture`.
 - **Credentials and human actions on dashboards:** Use `/wizard` to generate interactive scripts for tasks that require human intervention on portals or environment variables.
 - **Handoff between sessions or agents:** Use `/handoff` to synthesize work state into a portable document before restarting or switching context.
+- **Long-running strategic goal:** The beta `/chief-of-staff` skill coordinates delegated tactical work while preserving the strategic context. It is available only when in-progress skills are installed.
 - **Writing and structuring content:** Use `/writing-beats`, `/writing-fragments`, and `/writing-shape` to articulate syntheses, guides, and long-form documents.
 
 ---
