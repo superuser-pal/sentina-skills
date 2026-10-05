@@ -8,12 +8,14 @@ Reachable only when explicitly invoked by the developer (`disable-model-invocati
 
 - **[to-spec](./to-spec/SKILL.md)**: Turn a Notion AI minute, conversation, or task into an atomic, formal technical specification with graph IDs and anti-rationalization validation.
 - **[implement](./implement/SKILL.md)**: Disciplined execution on branch `feat/tarea-*` following a spec, with local validation, required evidence in `tasks/<id>/meta.yaml`, and strict anti-rationalization tables.
+- **[implement-spec](./implement-spec/SKILL.md)**: Implement an approved ticket graph on one integration branch, coordinating ready tickets in parallel worktrees and closing with review, evidence, and acceptance testing.
 - **[acceptance-test](./acceptance-test/SKILL.md)**: Generates the manual acceptance-test document from the spec's criteria and gates the PR on a human completing it against the live system.
 - **[to-tickets](./to-tickets/SKILL.md)**: Break a plan or spec into tracer-bullet slices, each declaring its blocking edges.
 - **[grill-with-docs](./grill-with-docs/SKILL.md)**: Grilling session that builds the project's domain model, sharpening terminology and updating documentation.
 - **[triage](./triage/SKILL.md)**: Move incoming issues through a state machine of triage roles.
 - **[improve-codebase-architecture](./improve-codebase-architecture/SKILL.md)**: Scan a codebase for deepening opportunities and present them as a visual report.
 - **[wayfinder](./wayfinder/SKILL.md)**: Chart a shared map of decisions for large or foggy efforts, resolved one at a time.
+- **[retro](./retro/SKILL.md)**: Review a coding session and propose improvements to navigation, deterministic checks, review standards, steering files, tooling, and information access.
 
 ## Model-invoked
 
@@ -35,5 +37,5 @@ Model- or user-reachable skills that trigger automatically or on request.
 - **[domain-modeling](./domain-modeling/SKILL.md)**: Build and sharpen the domain model, updating `wiki/context/glossary.md` and bi-temporal decisions in `wiki/context/decisions/`.
 - **[codebase-design](./codebase-design/SKILL.md)**: Shared discipline for deep modules: small interfaces, clean seams, and high leverage.
 - **[code-review](./code-review/SKILL.md)**: Multi-axis review of diffs against project standards, Sentina invariants, and specs.
-- **[resolving-merge-conflicts](./resolving-merge-conflicts/SKILL.md)**: Resolve git merge/rebase conflicts hunk by hunk by tracing original intent.
+- **[pr](./pr/SKILL.md)**: Shape a PR body with a compact visual summary, before-and-after evidence, and an explicit merge-risk assessment.
 - **[wizard](./wizard/SKILL.md)**: Interactive bash scripts for human-in-the-loop tasks (credentials, secrets, infrastructure).

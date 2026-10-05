@@ -134,12 +134,14 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 
 * [`to-spec`](./skills/engineering/to-spec/SKILL.md): Transforma la conversación, minuta de Notion AI o requerimiento en una especificación técnica formal atómica. Obliga a definir archivos, nodos de grafo, pruebas y cumplimiento de las 4 tablas.
 * [`implement`](./skills/engineering/implement/SKILL.md): Conduce el desarrollo estricto en la rama `feat/tarea-*`. Hace cumplir las pruebas locales, la generación de evidencia y bloquea atajos mediante las tablas anti-racionalización.
+* [`implement-spec`](./skills/engineering/implement-spec/SKILL.md): Coordina un grafo completo de tickets en ramas y worktrees aislados, integra el frente disponible y cierra con revisión, evidencia y aceptación.
 * [`acceptance-test`](./skills/engineering/acceptance-test/SKILL.md): Genera el documento de pruebas de aceptación a partir de los criterios del spec y bloquea el PR hasta que un humano lo complete contra el sistema real.
 * [`to-tickets`](./skills/engineering/to-tickets/SKILL.md): Desglosa un plan grande en rebanadas verticales (*tracer bullets*) independientes con dependencias de bloqueo explícitas.
 * [`grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md): Sesión de interrogatorio que además aterriza el modelo de dominio en repositorios que mantienen documentación de contexto.
 * [`triage`](./skills/engineering/triage/SKILL.md): Gestiona el triaje de incidencias o requerimientos externos pasando por estados formales (`needs-triage`, `ready-for-agent`, etc.).
 * [`improve-codebase-architecture`](./skills/engineering/improve-codebase-architecture/SKILL.md): Analiza el código en busca de módulos superficiales que deban rediseñarse como módulos profundos y presenta un reporte visual.
 * [`wayfinder`](./skills/engineering/wayfinder/SKILL.md): Para proyectos gigantes o difusos ("en la niebla"). Mapea un árbol de tickets de decisión que se van resolviendo uno a uno antes de intentar programar.
+* [`retro`](./skills/engineering/retro/SKILL.md): Revisa una sesión y propone mejoras al entorno del agente, priorizando verificaciones deterministas para errores mecánicos y estándares para decisiones de criterio.
 
 ---
 
@@ -161,7 +163,7 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 * [`diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md): Bucle metódico para bugs difíciles: obliga a crear una prueba que falle reproduciblemente antes de teorizar soluciones.
 * [`prototype`](./skills/engineering/prototype/SKILL.md): Crea código desechable en ramas `prototype/<nombre>` para responder dudas de diseño que no se pueden resolver en papel.
 * [`research`](./skills/engineering/research/SKILL.md): Despacha a un sub-agente a investigar documentación y fuentes primarias en segundo plano, dejando un archivo Markdown con citas.
-* [`resolving-merge-conflicts`](./skills/engineering/resolving-merge-conflicts/SKILL.md): Resuelve conflictos de merge bloque a bloque rastreando la intención en las fuentes primarias; jamás corre `--abort`.
+* [`pr`](./skills/engineering/pr/SKILL.md): Estructura el cuerpo de un Pull Request con un resumen visual mínimo, evidencia antes/después y una evaluación del riesgo de merge.
 * [`wizard`](./skills/engineering/wizard/SKILL.md): Genera scripts interactivos en Bash para pasos que forzosamente requieren acción humana (como ingresar credenciales en dashboards o crear llaves API).
 
 ---
@@ -181,8 +183,8 @@ Los agentes suelen inventar pretextos para saltarse reglas bajo la excusa de que
 ### E. Habilidades Auxiliares y en Progreso (In-Progress & Misc)
 
 * [`writing-beats`](./skills/in-progress/writing-beats/SKILL.md), [`writing-fragments`](./skills/in-progress/writing-fragments/SKILL.md) y [`writing-shape`](./skills/in-progress/writing-shape/SKILL.md): Tríada de habilidades de redacción estructurada. Útiles para redactar manifiestos, síntesis estratégicas o guías metodológicas largas a partir de material disperso.
-* [`retro`](./skills/in-progress/retro/SKILL.md): Realiza una retrospectiva de la sesión del agente para identificar mejoras en el `AGENTS.md`, linters o reglas.
 * [`loop-me`](./skills/in-progress/loop-me/SKILL.md): Afilado continuo de flujos a lo largo de varias sesiones.
+* [`chief-of-staff`](./skills/in-progress/chief-of-staff/SKILL.md): Coordina trabajo táctico delegado durante una meta de larga duración sin perder la perspectiva estratégica.
 * [`git-guardrails-claude-code`](./skills/misc/git-guardrails-claude-code/SKILL.md): Configura ganchos para bloquear comandos destructivos de git (`push --force`, `reset --hard`).
 * [`setup-pre-commit`](./skills/misc/setup-pre-commit/SKILL.md): Configuración de pre-commit para linter y chequeo de tipos.
 
